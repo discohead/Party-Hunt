@@ -30,17 +30,17 @@
     [self.upvoteButton setSelected:upvoted];
     
     if (upvoted) {
-        [self.upvoteButton setImage:[UIImage imageNamed:@"upvote-active"] forState:UIControlStateNormal];
+        [self.upvoteButton setImage:[UIImage imageNamed:@"upvoteActive"] forState:UIControlStateNormal];
     } else {
-        [self.upvoteButton setImage:[UIImage imageNamed:@"upvote-inactive"] forState:UIControlStateNormal];
+        [self.upvoteButton setImage:[UIImage imageNamed:@"upvoteInactive"] forState:UIControlStateNormal];
     }
 }
 
 - (void)shouldEnableUpvoteButton:(BOOL)enabled {
     if (enabled) {
-        [self.upvoteButton removeTarget:self action:@selector(didTapUpvoteButtonAction:) forControlEvents:UIControlEventTouchUpInside];
-    } else {
         [self.upvoteButton addTarget:self action:@selector(didTapUpvoteButtonAction:) forControlEvents:UIControlEventTouchUpInside];
+    } else {
+        [self.upvoteButton removeTarget:self action:@selector(didTapUpvoteButtonAction:) forControlEvents:UIControlEventTouchUpInside];
     }
 }
 

@@ -10,17 +10,20 @@
 
 IB_DESIGNABLE
 
+@class PFObject;
+
 @protocol PTHPartyTableViewCellDelegate;
 
 @interface PTHPartyTableViewCell : UITableViewCell
 
+@property (strong, nonatomic) PFObject *party;
 @property (weak, nonatomic) IBOutlet UIImageView *commentImageView;
-@property (weak, nonatomic) IBOutlet UILabel *titleLabel;
+@property (weak, nonatomic) IBOutlet UILabel *nameLabel;
 //@property (weak, nonatomic) IBOutlet UILabel *bylineLabel;
-@property (weak, nonatomic) IBOutlet UILabel *hoursLabel;
-@property (weak, nonatomic) IBOutlet UILabel *voteCountLabel;
+@property (weak, nonatomic) IBOutlet UILabel *upvoteCountLabel;
 @property (weak, nonatomic) IBOutlet UILabel *commentCountLabel;
 @property (weak, nonatomic) IBOutlet UILabel *locationLabel;
+@property (weak, nonatomic) IBOutlet UILabel *hoursLabel;
 @property (weak, nonatomic) IBOutlet UIButton *upvoteButton;
 @property (weak, nonatomic) id <PTHPartyTableViewCellDelegate> delegate;
 

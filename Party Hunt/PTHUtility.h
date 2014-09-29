@@ -16,4 +16,5 @@
 + (void)undoUpvotePartyInBackground:(id)party block:(void (^)(BOOL succeeded, NSError *error))completionBlock;
 
 + (PFQuery *)queryForActivitiesOnParty:(PFObject *)party cachePolicy:(PFCachePolicy)cachePolicy;
+
 @end

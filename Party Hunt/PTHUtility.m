@@ -25,7 +25,7 @@
     [queryExistingUpvotes findObjectsInBackgroundWithBlock:^(NSArray *upvotes, NSError *error) {
         if (!error) {
             for (PFObject *upvote in upvotes) {
-                [upvote delete];
+                [upvote deleteInBackground];
             }
         }
         
@@ -36,10 +36,10 @@
         [upvoteActivity setObject:[party objectForKey:kPTHPartyUserKey] forKey:kPTHActivityToUserKey];
         [upvoteActivity setObject:party forKey:kPTHActivityPartyKey];
         
-        PFACL *likeACL = [PFACL ACLWithUser:[PFUser currentUser]];
-        [likeACL setPublicReadAccess:YES];
-        [likeACL setWriteAccess:YES forUser:[party objectForKey:kPTHPartyUserKey]];
-        upvoteActivity.ACL = likeACL;
+        PFACL *upvoteACL = [PFACL ACLWithUser:[PFUser currentUser]];
+        [upvoteACL setPublicReadAccess:YES];
+        [upvoteACL setWriteAccess:YES forUser:[party objectForKey:kPTHPartyUserKey]];
+        upvoteActivity.ACL = upvoteACL;
         
         [upvoteActivity saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
             if (completionBlock) {
@@ -91,7 +91,7 @@
     [queryExistingUpvotes findObjectsInBackgroundWithBlock:^(NSArray *upvotes, NSError *error) {
         if (!error) {
             for (PFObject *upvote in upvotes) {
-                [upvote delete];
+                [upvote deleteInBackground];
             }
             
             if (completionBlock) {

@@ -10,6 +10,8 @@
 #import <FacebookSDK/FacebookSDK.h>
 #import <Parse/Parse.h>
 #import <ParseFacebookUtils/PFFacebookUtils.h>
+#import "PTHCache.h"
+#import "PTHConstants.h"
 
 @interface PTHAddPartyTableViewController ()
 
@@ -200,6 +202,9 @@
     [party setObject:eventId forKey:@"fbEventId"];
     
     [party setObject:[PFUser currentUser] forKey:@"user"];
+    [party setObject:@(0) forKey:@"commentCount"];
+    [party setObject:@(1) forKey:@"upvoteCount"];
+    [[PTHCache sharedCache] setPartyIsUpvotedByCurrentUser:party upvoted:YES];
     
     NSNumber *latitude = [fbEvent valueForKeyPath:@"venue.latitude"];
     NSNumber *longitude = [fbEvent valueForKeyPath:@"venue.longitude"];

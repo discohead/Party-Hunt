@@ -12,6 +12,9 @@
 		7F82693E19D2490A0078B005 /* PTHAddPartyTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7F82693D19D2490A0078B005 /* PTHAddPartyTableViewController.m */; };
 		7F82694119D4CF1D0078B005 /* PTHConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = 7F82694019D4CF1D0078B005 /* PTHConstants.m */; };
 		7F82694519D4EB6C0078B005 /* PTHCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 7F82694419D4EB6C0078B005 /* PTHCache.m */; };
+		7F8AA8E919D8DDED007E1BA9 /* main.js in Resources */ = {isa = PBXBuildFile; fileRef = 7F8AA8E419D8DDED007E1BA9 /* main.js */; };
+		7F8AA8EA19D8DDED007E1BA9 /* global.json in Resources */ = {isa = PBXBuildFile; fileRef = 7F8AA8E619D8DDED007E1BA9 /* global.json */; };
+		7F8AA8EB19D8DDED007E1BA9 /* index.html in Resources */ = {isa = PBXBuildFile; fileRef = 7F8AA8E819D8DDED007E1BA9 /* index.html */; };
 		7FCA3C6C19D0EE7100DB8386 /* PTHUtility.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FCA3C6B19D0EE7100DB8386 /* PTHUtility.m */; };
 		7FE9254119CF488500A40405 /* PTHTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FE9254019CF488500A40405 /* PTHTableViewController.m */; };
 		7FE9254C19CF6FED00A40405 /* PTHPartyTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FE9254B19CF6FED00A40405 /* PTHPartyTableViewCell.m */; };
@@ -43,6 +46,9 @@
 		7F82694019D4CF1D0078B005 /* PTHConstants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PTHConstants.m; sourceTree = "<group>"; };
 		7F82694319D4EB6C0078B005 /* PTHCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PTHCache.h; sourceTree = "<group>"; };
 		7F82694419D4EB6C0078B005 /* PTHCache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PTHCache.m; sourceTree = "<group>"; };
+		7F8AA8E419D8DDED007E1BA9 /* main.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = main.js; sourceTree = "<group>"; };
+		7F8AA8E619D8DDED007E1BA9 /* global.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = global.json; sourceTree = "<group>"; };
+		7F8AA8E819D8DDED007E1BA9 /* index.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = index.html; sourceTree = "<group>"; };
 		7FCA3C6A19D0EE7100DB8386 /* PTHUtility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PTHUtility.h; sourceTree = "<group>"; };
 		7FCA3C6B19D0EE7100DB8386 /* PTHUtility.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PTHUtility.m; sourceTree = "<group>"; };
 		7FE9253F19CF488500A40405 /* PTHTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PTHTableViewController.h; path = Controllers/PTHTableViewController.h; sourceTree = "<group>"; };
@@ -82,6 +88,48 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		7F8AA8E119D8DDED007E1BA9 /* CloudCode */ = {
+			isa = PBXGroup;
+			children = (
+				7F8AA8E219D8DDED007E1BA9 /* UpdateScore */,
+			);
+			path = CloudCode;
+			sourceTree = "<group>";
+		};
+		7F8AA8E219D8DDED007E1BA9 /* UpdateScore */ = {
+			isa = PBXGroup;
+			children = (
+				7F8AA8E319D8DDED007E1BA9 /* cloud */,
+				7F8AA8E519D8DDED007E1BA9 /* config */,
+				7F8AA8E719D8DDED007E1BA9 /* public */,
+			);
+			path = UpdateScore;
+			sourceTree = "<group>";
+		};
+		7F8AA8E319D8DDED007E1BA9 /* cloud */ = {
+			isa = PBXGroup;
+			children = (
+				7F8AA8E419D8DDED007E1BA9 /* main.js */,
+			);
+			path = cloud;
+			sourceTree = "<group>";
+		};
+		7F8AA8E519D8DDED007E1BA9 /* config */ = {
+			isa = PBXGroup;
+			children = (
+				7F8AA8E619D8DDED007E1BA9 /* global.json */,
+			);
+			path = config;
+			sourceTree = "<group>";
+		};
+		7F8AA8E719D8DDED007E1BA9 /* public */ = {
+			isa = PBXGroup;
+			children = (
+				7F8AA8E819D8DDED007E1BA9 /* index.html */,
+			);
+			path = public;
+			sourceTree = "<group>";
+		};
 		7FE9253E19CF47DD00A40405 /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
@@ -109,6 +157,7 @@
 		7FFA6D5B19CE2E21006030EB = {
 			isa = PBXGroup;
 			children = (
+				7F8AA8E119D8DDED007E1BA9 /* CloudCode */,
 				7FFA6D6619CE2E21006030EB /* Party Hunt */,
 				7FFA6D8019CE2E22006030EB /* Party HuntTests */,
 				7FFA6D6519CE2E21006030EB /* Products */,
@@ -262,8 +311,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				7FFA6D7319CE2E22006030EB /* Main.storyboard in Resources */,
+				7F8AA8EA19D8DDED007E1BA9 /* global.json in Resources */,
 				7FFA6D7819CE2E22006030EB /* LaunchScreen.xib in Resources */,
+				7F8AA8EB19D8DDED007E1BA9 /* index.html in Resources */,
 				7FFA6D7519CE2E22006030EB /* Images.xcassets in Resources */,
+				7F8AA8E919D8DDED007E1BA9 /* main.js in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -14,10 +14,17 @@
 #import "PTHCache.h"
 #import "PTHConstants.h"
 
+static NSString *CellIdentifier = @"PartyCell";
+
 
 @interface PTHTableViewController () <PFLogInViewControllerDelegate, PFSignUpViewControllerDelegate, PTHPartyTableViewCellDelegate>
 
 @property (nonatomic, strong) NSMutableDictionary *outstandingCellQueries;
+
+// A dictionary of offscreen cells that are used within the tableView:heightForRowAtIndexPath: method to
+// handle the height calculations. These are never drawn onscreen. The dictionary is in the format:
+//      { NSString *reuseIdentifier : UITableViewCell *offscreenCell, ... }
+@property (strong, nonatomic) NSMutableDictionary *offscreenCells;
 
 @end
 
@@ -30,6 +37,7 @@
     {
         self.parseClassName = kPTHPartyClassKey;
         self.outstandingCellQueries = [NSMutableDictionary dictionary];
+        self.offscreenCells = [NSMutableDictionary dictionary];
     }
     return self;
 }
@@ -37,6 +45,15 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+    // Self-sizing table view cells in iOS 8 require that the rowHeight property of the table view be set to the constant UITableViewAutomaticDimension
+    // self.tableView.rowHeight = UITableViewAutomaticDimension;
+    
+    // Self-sizing table view cells in iOS 8 are enabled when the estimatedRowHeight property of the table view is set to a non-zero value.
+    // Setting the estimated row height prevents the table view from calling tableView:heightForRowAtIndexPath: for every row in the table on first load;
+    // it will only be called as cells are about to scroll onscreen. This is a major performance optimization.
+    // self.tableView.estimatedRowHeight = 66.0; // set this to whatever your "average" cell height is; it doesn't need to be very accurate
+    
     PFUser *user = [PFUser currentUser];
     if (user)
     {
@@ -45,6 +62,13 @@
     {
         [self beginLogin];
     }
+}
+
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    [self loadObjects];
 }
 
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath object:(PFObject *)object
@@ -60,6 +84,9 @@
     
    [self configureCell:cell forObject:object atIndexPath:indexPath];
     
+    [cell setNeedsUpdateConstraints];
+    [cell updateConstraintsIfNeeded];
+    
     return cell;
 }
 
@@ -70,9 +97,16 @@
     if (attributesForParty)
     {
         [cell setUpvoteStatus:[[PTHCache sharedCache] isPartyUpvotedByCurrentUser:object]];
-        cell.voteCountLabel.text = [[[PTHCache sharedCache] upvoteCountForParty:object] description];
-        cell.commentCountLabel.text = [[[PTHCache sharedCache] commentCountForParty:object] description];
+        
+        if (cell.upvoteButton.alpha < 1.0f)
+        {
+            [UIView animateWithDuration:0.200f animations:^{
+                cell.upvoteButton.alpha = 1.0f;
+            }];
+        }
     } else {
+        
+        cell.upvoteButton.alpha = 0.0f;
         
         @synchronized(self)
         {
@@ -81,7 +115,7 @@
             if (!outstandingCellQueryStatus)
             {
                 PFQuery *query = [PTHUtility queryForActivitiesOnParty:object cachePolicy:kPFCachePolicyNetworkOnly];
-                [self.outstandingCellQueries setObject:query forKey:@(indexPath.row)];
+                //[self.outstandingCellQueries setObject:@(YES) forKey:@(indexPath.row)];
                 [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
                     @synchronized(self)
                     {
@@ -119,29 +153,38 @@
                         [[PTHCache sharedCache] setAttributesForParty:object upvoters:upvoters commenters:commenters upvotedByCurrentUser:isUpvotedByCurrentUser];
                         
                         [cell setUpvoteStatus:[[PTHCache sharedCache] isPartyUpvotedByCurrentUser:object]];
-                        cell.voteCountLabel.text = [[[PTHCache sharedCache] upvoteCountForParty:object] description];
-                        cell.commentCountLabel.text = [[[PTHCache sharedCache] commentCountForParty:object] description];
+                        
+                        if (cell.upvoteButton.alpha < 1.0f)
+                        {
+                            [UIView animateWithDuration:0.200f animations:^{
+                                cell.upvoteButton.alpha = 1.0f;
+                            }];
+                        }
                     }
                 }];
             }
         }
     }
-    cell.titleLabel.text = [object valueForKey:@"name"];
+    
+    cell.nameLabel.text = [object valueForKey:@"name"];
     //cell.bylineLabel.text = [object objectForKey:@"description"];
+    
+    cell.upvoteCountLabel.text = [NSString stringWithFormat:@"%@",[object valueForKey:@"upvoteCount"]];
+    cell.commentCountLabel.text = [NSString stringWithFormat:@"%@",[object valueForKey:@"commentCount"]];
     
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
     [dateFormatter setDateFormat:@"yyyy-MM-dd'T'HH:mm:ssZ"];
     
     NSDateFormatter *hourFormatter = [[NSDateFormatter alloc] init];
-    [hourFormatter setDateFormat:@"h a"];
+    [hourFormatter setDateFormat:@"ha"];
     
     NSString *startTime = [object valueForKey:@"start_time"];
     NSDate *startDate = [dateFormatter dateFromString:startTime];
-    startTime = [hourFormatter stringFromDate:startDate];
+    startTime = [[hourFormatter stringFromDate:startDate] lowercaseString];
     
     NSString *endTime = [object valueForKey:@"end_time"];
     NSDate *endDate = [dateFormatter dateFromString:endTime];
-    endTime = [hourFormatter stringFromDate:endDate];
+    endTime = [[hourFormatter stringFromDate:endDate] lowercaseString];
     
     NSString *hoursString = [NSString stringWithFormat:@"%@ - %@", startTime, endTime];
     
@@ -156,14 +199,16 @@
     }
     
     cell.hoursLabel.text = hoursString;
-    NSString *location = [object valueForKey:@"location"];
-    if ([location length] > 20)
-    {
-        location = [location substringToIndex:20];
-    }
-    
-    cell.locationLabel.text = location;
+    cell.locationLabel.text = [object valueForKey:@"location"];
     cell.delegate = self;
+}
+
+
+- (PFQuery *)queryForTable
+{
+    PFQuery *query = [PFQuery queryWithClassName:@"Party"];
+    [query orderByDescending:@"upvoteCount"];
+    return query;
 }
 
 #pragma mark - PTHPartyTableViewCellDelegate
@@ -179,12 +224,12 @@
     BOOL upvoted = !button.selected;
     [partyTableViewCell setUpvoteStatus:upvoted];
     
-    NSString *originalUpvoteCount = partyTableViewCell.voteCountLabel.text;
+    NSString *originalUpvoteCount = partyTableViewCell.upvoteCountLabel.text;
     
     NSNumberFormatter *numberFormatter = [[NSNumberFormatter alloc] init];
     [numberFormatter setLocale:[[NSLocale alloc] initWithLocaleIdentifier:@"en_US"]];
     
-    NSNumber *upvoteCount = [numberFormatter numberFromString:partyTableViewCell.voteCountLabel.text];
+    NSNumber *upvoteCount = [numberFormatter numberFromString:partyTableViewCell.upvoteCountLabel.text];
     if (upvoted) {
         upvoteCount = [NSNumber numberWithInt:[upvoteCount intValue] + 1];
         [[PTHCache sharedCache] incrementUpvoteCountForParty:party];
@@ -197,7 +242,7 @@
     
    [[PTHCache sharedCache] setPartyIsUpvotedByCurrentUser:party upvoted:upvoted];
     
-    partyTableViewCell.voteCountLabel.text = [numberFormatter stringFromNumber:upvoteCount];
+    partyTableViewCell.upvoteCountLabel.text = [numberFormatter stringFromNumber:upvoteCount];
     
     if (upvoted) {
         [PTHUtility upvotePartyInBackground:party block:^(BOOL succeeded, NSError *error) {
@@ -206,7 +251,7 @@
             [actualTableViewCell setUpvoteStatus:succeeded];
             
             if (!succeeded) {
-                actualTableViewCell.voteCountLabel.text = originalUpvoteCount;
+                actualTableViewCell.upvoteCountLabel.text = originalUpvoteCount;
             }
         }];
     } else {
@@ -216,10 +261,15 @@
             [actualTableViewCell setUpvoteStatus:!succeeded];
             
             if (!succeeded) {
-                actualTableViewCell.voteCountLabel.text = originalUpvoteCount;
+                actualTableViewCell.upvoteCountLabel.text = originalUpvoteCount;
             }
         }];
     }
+}
+
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    return 82;
 }
 
 #pragma mark - PFLogInViewControllerDelegate
@@ -337,5 +387,27 @@
     [self presentViewController:logInViewController animated:YES completion:NULL];
 }
 
+- (IBAction)logOut {
+    // clear cache
+    [[PTHCache sharedCache] clear];
+    
+    // clear NSUserDefaults
+    [[NSUserDefaults standardUserDefaults] removeObjectForKey:kPTHUserDefaultsCacheFacebookFriendsKey];
+    [[NSUserDefaults standardUserDefaults] removeObjectForKey:kPTHUserDefaultsActivityFeedViewControllerLastRefreshKey];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+    
+    // Unsubscribe from push notifications by removing the user association from the current installation.
+    // [[PFInstallation currentInstallation] removeObjectForKey:kPAPInstallationUserKey];
+    // [[PFInstallation currentInstallation] saveInBackground];
+    
+    // Clear all caches
+    [PFQuery clearAllCachedResults];
+    
+    // Log out
+    [PFUser logOut];
+    
+    [self beginLogin];
+
+}
 
 @end

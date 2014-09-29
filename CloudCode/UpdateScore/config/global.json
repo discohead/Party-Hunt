@@ -1,0 +1,14 @@
+{
+    "applications": {
+        "Party Hunt": {
+            "applicationId": "6QvROqC1Z9Xw12N59iefRZrCyTBqOwxIze18pAGE", 
+            "masterKey": "NGfCI8jAWjkfGELOg2sMQ62KXK2khhHTSiK7beTB"
+        }, 
+        "_default": {
+            "link": "Party Hunt"
+        }
+    }, 
+    "global": {
+        "parseVersion": "1.3.0"
+    }
+}
