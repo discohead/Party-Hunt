@@ -43,6 +43,13 @@ NSString *const kPTHUserProfilePicMediumKey                     = @"profilePictu
 NSString *const kPTHUserFacebookFriendsKey                      = @"facebookFriends";
 NSString *const kPTHUserAlreadyAutoFollowedFacebookFriendsKey   = @"userAlreadyAutoFollowedFacebookFriends";
 
+#pragma mark - Facebook Event Keys
+
+NSString *const kPTHFbEventsCreated     = @"created";
+NSString *const kPTHFbEventsAttending   = @"attending";
+NSString *const kPTHFbEventsMaybe       = @"maybe";
+NSString *const kPTHFbEventsNotReplied  = @"not_replied";
+NSString *const kPTHFbEventsDeclined    = @"declined";
 
 #pragma mark - PFObject Party Class
 // Class key
@@ -55,15 +62,13 @@ NSString *const kPTHPartyStartTimeKey     = @"start_time";
 NSString *const kPTHPartyEndTimeKey       = @"end_time";
 NSString *const kPTHPartyFbEventIdKey     = @"fbEventId";
 NSString *const kPTHPartyUserKey          = @"user";
-
-
-#pragma mark - Cached Party Attributes
-// keys
-NSString *const kPTHPartyAttributesIsUpvotedByCurrentUserKey = @"isUpvotedByCurrentUser";
-NSString *const kPTHPartyAttributesUpvoteCountKey            = @"upvoteCount";
-NSString *const kPTHPartyAttributesUpvotersKey               = @"upvoters";
-NSString *const kPTHPartyAttributesCommentCountKey           = @"commentCount";
-NSString *const kPTHPartyAttributesCommentersKey             = @"commenters";
+NSString *const kPTHPartyVenueKey         = @"venue";
+NSString *const kPTHPartyDescriptionKey   = @"description";
+NSString *const kPTHPartyLocationKey      = @"location";
+NSString *const kPTHPartyPrivacyKey       = @"privacy";
+NSString *const kPTHPartyCommentCountKey  = @"commentCount";
+NSString *const kPTHPartyUpvotersKey      = @"upvoters";
+NSString *const kPTHPartyUpvoteCountKey   = @"upvoteCount";
 
 
 #pragma mark - Cached User Attributes

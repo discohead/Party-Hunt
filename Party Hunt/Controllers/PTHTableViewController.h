@@ -7,6 +7,7 @@
 //
 
 #import <Parse/Parse.h>
+#import "PTHAddPartyTableViewController.h"
 
 @interface UINavigationItem(MultipleButtonsAddition)
 @property (nonatomic, strong) IBOutletCollection(UIBarButtonItem) NSArray* rightBarButtonItemsCollection;
@@ -33,6 +34,6 @@
 
 @end
 
-@interface PTHTableViewController : PFQueryTableViewController
+@interface PTHTableViewController : PFQueryTableViewController <PTHAddPartyTableViewControllerDelegate>
 
 @end

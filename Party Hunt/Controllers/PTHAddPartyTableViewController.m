@@ -12,27 +12,36 @@
 #import <ParseFacebookUtils/PFFacebookUtils.h>
 #import "PTHCache.h"
 #import "PTHConstants.h"
+#import "PTHUtility.h"
 
-@interface PTHAddPartyTableViewController ()
+@interface PTHAddPartyTableViewController () <UIAlertViewDelegate, FBRequestConnectionDelegate>
 
-@property (strong,nonatomic) NSArray *eventsCreated;
-@property (strong,nonatomic) NSArray *eventsAttending;
-@property (strong,nonatomic) NSArray *eventsMaybe;
-@property (strong,nonatomic) NSArray *eventsNotReplied;
-@property (strong,nonatomic) NSArray *eventsDeclined;
+@property (strong, nonatomic) UIView *loadingView;
+@property (strong, nonatomic) IBOutlet UIActivityIndicatorView *activityIndicator;
 
 @end
 
 @implementation PTHAddPartyTableViewController
 
+- (id)initWithCoder:(NSCoder *)aDecoder
+{
+    self = [super initWithCoder:aDecoder];
+    if (self)
+    {
+        self.events = [NSMutableDictionary dictionary];
+        [self getFbEventsForCurrentUser];
+        self.loadingView = [[UIView alloc] init];
+    }
+    return self;
+}
+
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
-    self.eventsCreated = [[[PFUser currentUser] objectForKey:@"fbEventsCreated"] objectForKey:@"data"];
-    self.eventsAttending = [[[PFUser currentUser] objectForKey:@"fbEventsAttending"] objectForKey:@"data"];
-    self.eventsMaybe = [[[PFUser currentUser] objectForKey:@"fbEventsMaybe"] objectForKey:@"data"];
-    self.eventsNotReplied = [[[PFUser currentUser] objectForKey:@"fbEventsNotReplied"] objectForKey:@"data"];
-    self.eventsDeclined = [[[PFUser currentUser] objectForKey:@"fbEventsDeclined"] objectForKey:@"data"];
+    [self.refreshControl addTarget:self action:@selector(getFbEventsForCurrentUser) forControlEvents:UIControlEventValueChanged];
+    self.loadingView.frame = self.tableView.frame;
+    [self.loadingView addSubview:self.activityIndicator];
+    self.activityIndicator.center = self.loadingView.center;
+    self.tableView.hidden = YES;
 
 }
 
@@ -61,26 +70,27 @@
             break;
             
         case 1:
-            rows = [self.eventsCreated count];
+            rows = [self.events[kPTHFbEventsCreated] count];
             break;
         
         case 2:
-            rows = [self.eventsAttending count];
+            rows = [self.events[kPTHFbEventsAttending] count];
             break;
             
         case 3:
-            rows = [self.eventsMaybe count];
+            rows = [self.events[kPTHFbEventsMaybe] count];
             break;
             
         case 4:
-            rows = [self.eventsNotReplied count];
+            rows = [self.events[kPTHFbEventsNotReplied] count];
             break;
             
         case 5:
-            rows = [self.eventsDeclined count];
+            rows = [self.events[kPTHFbEventsDeclined] count];
             break;
         
         default:
+            rows = 0;
             break;
     }
     
@@ -99,23 +109,23 @@
             break;
         
         case 1:
-            cell.textLabel.text = [[self.eventsCreated objectAtIndex:indexPath.row] objectForKey:@"name"];
+            cell.textLabel.text = self.events[kPTHFbEventsCreated][indexPath.row][@"name"];
             break;
         
         case 2:
-            cell.textLabel.text = [[self.eventsAttending objectAtIndex:indexPath.row] objectForKey:@"name"];
+            cell.textLabel.text = self.events[kPTHFbEventsAttending][indexPath.row][@"name"];
             break;
             
         case 3:
-            cell.textLabel.text = [[self.eventsMaybe objectAtIndex:indexPath.row] objectForKey:@"name"];
+            cell.textLabel.text = self.events[kPTHFbEventsMaybe][indexPath.row][@"name"];
             break;
             
         case 4:
-            cell.textLabel.text = [[self.eventsNotReplied objectAtIndex:indexPath.row] objectForKey:@"name"];
+            cell.textLabel.text = self.events[kPTHFbEventsNotReplied][indexPath.row][@"name"];
             break;
             
         case 5:
-            cell.textLabel.text = [[self.eventsDeclined objectAtIndex:indexPath.row] objectForKey:@"name"];
+            cell.textLabel.text = self.events[kPTHFbEventsDeclined][indexPath.row][@"name"];
         default:
             break;
     }
@@ -170,41 +180,40 @@
             break;
             
         case 1:
-            [self addPartyFromFBEvent:self.eventsCreated[indexPath.row]];
+            [self addPartyFromFBEvent:self.events[kPTHFbEventsCreated][indexPath.row]];
             break;
             
         case 2:
-            [self addPartyFromFBEvent:self.eventsAttending[indexPath.row]];
+            [self addPartyFromFBEvent:self.events[kPTHFbEventsAttending][indexPath.row]];
             break;
             
         case 3:
-            [self addPartyFromFBEvent:self.eventsMaybe[indexPath.row]];
+            [self addPartyFromFBEvent:self.events[kPTHFbEventsMaybe][indexPath.row]];
             break;
             
         case 4:
-            [self addPartyFromFBEvent:self.eventsNotReplied[indexPath.row]];
+            [self addPartyFromFBEvent:self.events[kPTHFbEventsNotReplied][indexPath.row]];
             break;
             
         case 5:
-            [self addPartyFromFBEvent:self.eventsDeclined[indexPath.row]];
+            [self addPartyFromFBEvent:self.events[kPTHFbEventsDeclined][indexPath.row]];
         default:
             break;
     }
     
-    [self dismissViewControllerAnimated:YES completion:NULL];
 }
 
 - (void)addPartyFromFBEvent:(NSDictionary *)fbEvent
 {
-    //NSLog(@"fbEvent.description = %@", [fbEvent valueForKey:@"description"]);
-    NSNumber *eventId = [fbEvent valueForKey:@"id"];
-    PFObject *party = [PFObject objectWithClassName:@"Party" dictionary:fbEvent];
-    [party setObject:eventId forKey:@"fbEventId"];
+    NSMutableDictionary *mutableFbEvent = [fbEvent mutableCopy];
+    [mutableFbEvent setObject:fbEvent[@"id"] forKey:kPTHPartyFbEventIdKey];
+    [mutableFbEvent removeObjectForKey:@"id"];
+    PFObject *party = [PFObject objectWithClassName:kPTHPartyClassKey dictionary:mutableFbEvent];
     
-    [party setObject:[PFUser currentUser] forKey:@"user"];
-    [party setObject:@(0) forKey:@"commentCount"];
-    [party setObject:@(1) forKey:@"upvoteCount"];
-    [[PTHCache sharedCache] setPartyIsUpvotedByCurrentUser:party upvoted:YES];
+    [party setObject:[PFUser currentUser] forKey:kPTHPartyUserKey];     
+    [party setObject:@(0) forKey:kPTHPartyCommentCountKey];
+    [party setObject:@(0) forKey:kPTHPartyUpvoteCountKey];
+    [party addUniqueObject:[PFUser currentUser] forKey:kPTHPartyUpvotersKey];
     
     NSNumber *latitude = [fbEvent valueForKeyPath:@"venue.latitude"];
     NSNumber *longitude = [fbEvent valueForKeyPath:@"venue.longitude"];
@@ -212,15 +221,130 @@
     if (latitude && longitude)
     {
         PFGeoPoint *geoLocation = [PFGeoPoint geoPointWithLatitude:latitude.doubleValue longitude:longitude.doubleValue];
-        [party setObject:geoLocation forKey:@"geoLocation"];
+        [party setObject:geoLocation forKey:kPTHPartyGeoLocationKey];
     }
     
     [party saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
         if (!succeeded)
         {
             NSLog(@"Error saving party: %@", [error localizedDescription]);
+        } else
+        {
+            [PTHUtility upvotePartyInBackground:party block:^(BOOL succeeded, NSError *error) {
+                if (!succeeded)
+                {
+                    NSLog(@"Error upvoting party in background: %@", [error localizedDescription]);
+                } else
+                {
+                    [self.delegate didAddParty:party];
+                }
+            }];
+            NSLog(@"Party saved successfully");
         }
     }];
+    
+    [self dismissViewControllerAnimated:YES completion:NULL];
+}
+
+- (void)getFbEventsForCurrentUser
+{
+    
+    NSArray *permissions = [[[FBSession activeSession] accessTokenData] permissions];
+    
+    if (![permissions containsObject:@"user_events"])
+    {
+        __block BOOL permissionGranted;
+        
+        [PFFacebookUtils reauthorizeUser:[PFUser currentUser] withPublishPermissions:[NSArray arrayWithObjects:@"public_profile",@"user_friends",@"email",@"user_events", nil] audience:FBSessionDefaultAudienceFriends block:^(BOOL succeeded, NSError *error) {
+            if (!succeeded)
+            {
+                NSLog(@"Error obtaining user_events permission: %@", [error localizedDescription]);
+                [self.events setObject:error forKey:@"authError"];
+            }
+            permissionGranted = succeeded;
+        }];
+        if (!permissionGranted)
+        {
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Permissions Error" message:@"This app does not have permission to access your Facebook Events" delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Re-Authorize", nil];
+            [alert show];
+        }
+    }
+    
+    FBRequest *createdRequest = [FBRequest requestForGraphPath:@"me/events/created?fields=name,description,start_time,end_time,location,venue,privacy"];
+    FBRequest *attendingRequest = [FBRequest requestForGraphPath:@"me/events/attending?fields=name,description,start_time,end_time,location,venue,privacy"];
+    FBRequest *maybeRequest = [FBRequest requestForGraphPath:@"me/events/maybe?fields=name,description,start_time,end_time,location,venue,privacy"];
+    FBRequest *notRepliedRequest = [FBRequest requestForGraphPath:@"me/events/not_replied?fields=name,description,start_time,end_time,location,venue,privacy"];
+    FBRequest *declinedRequest = [FBRequest requestForGraphPath:@"me/events/declined?fields=name,description,start_time,end_time,location,venue,privacy"];
+    
+    FBRequestConnection *requestConnection = [[FBRequestConnection alloc] init];
+    
+    [requestConnection addRequest:createdRequest completionHandler:^(FBRequestConnection *connection, id result, NSError *error) {
+        if (!error)
+        {
+            [self.events setObject:result[@"data"] forKey:kPTHFbEventsCreated];
+        } else
+        {
+            [self.events setObject:error forKey:kPTHFbEventsCreated];
+            NSLog(@"Error getting events/created: %@", [error localizedDescription]);
+        }
+    }];
+    
+    [requestConnection addRequest:attendingRequest completionHandler:^(FBRequestConnection *connection, id result, NSError *error) {
+        if (!error)
+        {
+            [self.events setObject:result[@"data"] forKey:kPTHFbEventsAttending];
+        } else
+        {
+            [self.events setObject:error forKey:kPTHFbEventsAttending];
+            NSLog(@"Error getting events/attending: %@", [error localizedDescription]);
+        }
+    }];
+    
+    [requestConnection addRequest:maybeRequest completionHandler:^(FBRequestConnection *connection, id result, NSError *error) {
+        if (!error)
+        {
+            [self.events setObject:result[@"data"] forKey:kPTHFbEventsMaybe];
+        } else
+        {
+            [self.events setObject:error forKey:kPTHFbEventsMaybe];
+            NSLog(@"Error getting events/maybe: %@", [error localizedDescription]);
+        }
+    }];
+    
+    [requestConnection addRequest:notRepliedRequest completionHandler:^(FBRequestConnection *connection, id result, NSError *error) {
+        if (!error)
+        {
+            [self.events setObject:result[@"data"] forKey:kPTHFbEventsNotReplied];
+        } else
+        {
+            [self.events setObject:error forKey:kPTHFbEventsNotReplied];
+            NSLog(@"Error getting events/not_replied: %@", [error localizedDescription]);
+        }
+    }];
+    
+    [requestConnection addRequest:declinedRequest completionHandler:^(FBRequestConnection *connection, id result, NSError *error) {
+        if (!error)
+        {
+            [self.events setObject:result[@"data"] forKey:kPTHFbEventsDeclined];
+        } else
+        {
+            [self.events setObject:error forKey:kPTHFbEventsDeclined];
+            NSLog(@"Error getting events/declined: %@", [error localizedDescription]);
+        }
+    }];
+    requestConnection.delegate = self;
+    [requestConnection start];
+}
+
+#pragma mark - FBRequestConnectionDelegate
+
+- (void)requestConnectionDidFinishLoading:(FBRequestConnection *)connection fromCache:(BOOL)isCached
+{
+    [self.tableView reloadData];
+    [self.refreshControl endRefreshing];
+    [self.activityIndicator stopAnimating];
+    self.loadingView.hidden = YES;
+    self.tableView.hidden = NO;
 }
 
 @end

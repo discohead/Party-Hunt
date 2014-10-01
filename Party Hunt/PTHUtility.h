@@ -11,10 +11,9 @@
 
 @interface PTHUtility : NSObject
 
-+ (void)updateFacebookEventsForUser:(PFUser *)user;
++ (NSMutableDictionary *)getFbEventsForCurrentUser;
 + (void)upvotePartyInBackground:(id)party block:(void (^)(BOOL succeeded, NSError *error))completionBlock;
 + (void)undoUpvotePartyInBackground:(id)party block:(void (^)(BOOL succeeded, NSError *error))completionBlock;
-
-+ (PFQuery *)queryForActivitiesOnParty:(PFObject *)party cachePolicy:(PFCachePolicy)cachePolicy;
++ (BOOL)userArray:(NSArray *)userArray containsUser:(PFUser *)user;
 
 @end

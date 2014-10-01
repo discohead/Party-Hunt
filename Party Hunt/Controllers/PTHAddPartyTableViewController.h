@@ -8,6 +8,17 @@
 
 #import <UIKit/UIKit.h>
 
+@class PFObject;
+
+@protocol PTHAddPartyTableViewControllerDelegate <NSObject>
+
+- (void)didAddParty:(PFObject *)party;
+
+@end
+
 @interface PTHAddPartyTableViewController : UITableViewController
+
+@property (strong, nonatomic) NSMutableDictionary *events;
+@property (weak, nonatomic) id <PTHAddPartyTableViewControllerDelegate> delegate;
 
 @end

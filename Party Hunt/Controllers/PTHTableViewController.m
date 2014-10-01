@@ -9,6 +9,7 @@
 #import "PTHTableViewController.h"
 #import <FacebookSDK/FacebookSDK.h>
 #import <ParseFacebookUtils/PFFacebookUtils.h>
+//#import "PTHAddPartyTableViewController.h"
 #import "PTHPartyTableViewCell.h"
 #import "PTHUtility.h"
 #import "PTHCache.h"
@@ -18,13 +19,6 @@ static NSString *CellIdentifier = @"PartyCell";
 
 
 @interface PTHTableViewController () <PFLogInViewControllerDelegate, PFSignUpViewControllerDelegate, PTHPartyTableViewCellDelegate>
-
-@property (nonatomic, strong) NSMutableDictionary *outstandingCellQueries;
-
-// A dictionary of offscreen cells that are used within the tableView:heightForRowAtIndexPath: method to
-// handle the height calculations. These are never drawn onscreen. The dictionary is in the format:
-//      { NSString *reuseIdentifier : UITableViewCell *offscreenCell, ... }
-@property (strong, nonatomic) NSMutableDictionary *offscreenCells;
 
 @end
 
@@ -36,8 +30,6 @@ static NSString *CellIdentifier = @"PartyCell";
     if (self)
     {
         self.parseClassName = kPTHPartyClassKey;
-        self.outstandingCellQueries = [NSMutableDictionary dictionary];
-        self.offscreenCells = [NSMutableDictionary dictionary];
     }
     return self;
 }
@@ -46,29 +38,11 @@ static NSString *CellIdentifier = @"PartyCell";
 {
     [super viewDidLoad];
     
-    // Self-sizing table view cells in iOS 8 require that the rowHeight property of the table view be set to the constant UITableViewAutomaticDimension
-    // self.tableView.rowHeight = UITableViewAutomaticDimension;
-    
-    // Self-sizing table view cells in iOS 8 are enabled when the estimatedRowHeight property of the table view is set to a non-zero value.
-    // Setting the estimated row height prevents the table view from calling tableView:heightForRowAtIndexPath: for every row in the table on first load;
-    // it will only be called as cells are about to scroll onscreen. This is a major performance optimization.
-    // self.tableView.estimatedRowHeight = 66.0; // set this to whatever your "average" cell height is; it doesn't need to be very accurate
-    
     PFUser *user = [PFUser currentUser];
-    if (user)
-    {
-        [PTHUtility updateFacebookEventsForUser:user];
-    } else
+    if (!user)
     {
         [self beginLogin];
     }
-}
-
-
-- (void)viewWillAppear:(BOOL)animated
-{
-    [super viewWillAppear:animated];
-    [self loadObjects];
 }
 
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath object:(PFObject *)object
@@ -84,93 +58,20 @@ static NSString *CellIdentifier = @"PartyCell";
     
    [self configureCell:cell forObject:object atIndexPath:indexPath];
     
-    [cell setNeedsUpdateConstraints];
-    [cell updateConstraintsIfNeeded];
-    
     return cell;
 }
 
-- (void)configureCell:(PTHPartyTableViewCell *)cell forObject:(PFObject *)object atIndexPath:(NSIndexPath *)indexPath
+- (void)configureCell:(PTHPartyTableViewCell *)cell forObject:(PFObject *)party atIndexPath:(NSIndexPath *)indexPath
 {
-    NSDictionary *attributesForParty = [[PTHCache sharedCache] attributesForParty:object];
+    NSArray *upvoters = [party objectForKey:kPTHPartyUpvotersKey];
+    BOOL isUpvotedByCurrentUser = [PTHUtility userArray:upvoters containsUser:[PFUser currentUser]];
+    [cell setUpvoteStatus:isUpvotedByCurrentUser];
     
-    if (attributesForParty)
-    {
-        [cell setUpvoteStatus:[[PTHCache sharedCache] isPartyUpvotedByCurrentUser:object]];
-        
-        if (cell.upvoteButton.alpha < 1.0f)
-        {
-            [UIView animateWithDuration:0.200f animations:^{
-                cell.upvoteButton.alpha = 1.0f;
-            }];
-        }
-    } else {
-        
-        cell.upvoteButton.alpha = 0.0f;
-        
-        @synchronized(self)
-        {
-            // check if we can update the cache
-            NSNumber *outstandingCellQueryStatus = [self.outstandingCellQueries objectForKey:@(indexPath.row)];
-            if (!outstandingCellQueryStatus)
-            {
-                PFQuery *query = [PTHUtility queryForActivitiesOnParty:object cachePolicy:kPFCachePolicyNetworkOnly];
-                //[self.outstandingCellQueries setObject:@(YES) forKey:@(indexPath.row)];
-                [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
-                    @synchronized(self)
-                    {
-                        [self.outstandingCellQueries removeObjectForKey:@(indexPath.row)];
-                        
-                        if (error)
-                        {
-                            return;
-                        }
-                        
-                        NSMutableArray *upvoters = [NSMutableArray array];
-                        NSMutableArray *commenters = [NSMutableArray array];
-                        
-                        BOOL isUpvotedByCurrentUser = NO;
-                        
-                        for (PFObject *activity in objects)
-                        {
-                            if ([[activity objectForKey:kPTHActivityTypeKey] isEqualToString:kPTHActivityTypeUpvote] && [activity objectForKey:kPTHActivityFromUserKey])
-                            {
-                                [upvoters addObject:[activity objectForKey:kPTHActivityFromUserKey]];
-                            } else if ([[activity objectForKey:kPTHActivityTypeKey] isEqualToString:kPTHActivityTypeComment] && [activity objectForKey:kPTHActivityFromUserKey])
-                            {
-                                [commenters addObject:[activity objectForKey:kPTHActivityFromUserKey]];
-                            }
-                            
-                            if ([[[activity objectForKey:kPTHActivityFromUserKey] objectId] isEqualToString:[[PFUser currentUser] objectId]])
-                            {
-                                if ([[activity objectForKey:kPTHActivityTypeKey] isEqualToString:kPTHActivityTypeUpvote])
-                                {
-                                    isUpvotedByCurrentUser = YES;
-                                }
-                            }
-                        }
-                        
-                        [[PTHCache sharedCache] setAttributesForParty:object upvoters:upvoters commenters:commenters upvotedByCurrentUser:isUpvotedByCurrentUser];
-                        
-                        [cell setUpvoteStatus:[[PTHCache sharedCache] isPartyUpvotedByCurrentUser:object]];
-                        
-                        if (cell.upvoteButton.alpha < 1.0f)
-                        {
-                            [UIView animateWithDuration:0.200f animations:^{
-                                cell.upvoteButton.alpha = 1.0f;
-                            }];
-                        }
-                    }
-                }];
-            }
-        }
-    }
-    
-    cell.nameLabel.text = [object valueForKey:@"name"];
+    cell.nameLabel.text = [party valueForKey:kPTHPartyNameKey];
     //cell.bylineLabel.text = [object objectForKey:@"description"];
     
-    cell.upvoteCountLabel.text = [NSString stringWithFormat:@"%@",[object valueForKey:@"upvoteCount"]];
-    cell.commentCountLabel.text = [NSString stringWithFormat:@"%@",[object valueForKey:@"commentCount"]];
+    cell.upvoteCountLabel.text = [NSString stringWithFormat:@"%@",[party valueForKey:kPTHPartyUpvoteCountKey]];
+    cell.commentCountLabel.text = [NSString stringWithFormat:@"%@",[party valueForKey:kPTHPartyCommentCountKey]];
     
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
     [dateFormatter setDateFormat:@"yyyy-MM-dd'T'HH:mm:ssZ"];
@@ -178,11 +79,11 @@ static NSString *CellIdentifier = @"PartyCell";
     NSDateFormatter *hourFormatter = [[NSDateFormatter alloc] init];
     [hourFormatter setDateFormat:@"ha"];
     
-    NSString *startTime = [object valueForKey:@"start_time"];
+    NSString *startTime = [party valueForKey:kPTHPartyStartTimeKey];
     NSDate *startDate = [dateFormatter dateFromString:startTime];
     startTime = [[hourFormatter stringFromDate:startDate] lowercaseString];
     
-    NSString *endTime = [object valueForKey:@"end_time"];
+    NSString *endTime = [party valueForKey:kPTHPartyEndTimeKey];
     NSDate *endDate = [dateFormatter dateFromString:endTime];
     endTime = [[hourFormatter stringFromDate:endDate] lowercaseString];
     
@@ -199,15 +100,15 @@ static NSString *CellIdentifier = @"PartyCell";
     }
     
     cell.hoursLabel.text = hoursString;
-    cell.locationLabel.text = [object valueForKey:@"location"];
+    cell.locationLabel.text = [party valueForKey:kPTHPartyLocationKey];
     cell.delegate = self;
 }
 
 
 - (PFQuery *)queryForTable
 {
-    PFQuery *query = [PFQuery queryWithClassName:@"Party"];
-    [query orderByDescending:@"upvoteCount"];
+    PFQuery *query = [PFQuery queryWithClassName:kPTHPartyClassKey];
+    [query orderByDescending:kPTHPartyUpvoteCountKey];
     return query;
 }
 
@@ -232,15 +133,11 @@ static NSString *CellIdentifier = @"PartyCell";
     NSNumber *upvoteCount = [numberFormatter numberFromString:partyTableViewCell.upvoteCountLabel.text];
     if (upvoted) {
         upvoteCount = [NSNumber numberWithInt:[upvoteCount intValue] + 1];
-        [[PTHCache sharedCache] incrementUpvoteCountForParty:party];
     } else {
         if ([upvoteCount intValue] > 0) {
             upvoteCount = [NSNumber numberWithInt:[upvoteCount intValue] - 1];
         }
-        [[PTHCache sharedCache] decrementUpvoteCountForParty:party];
     }
-    
-   [[PTHCache sharedCache] setPartyIsUpvotedByCurrentUser:party upvoted:upvoted];
     
     partyTableViewCell.upvoteCountLabel.text = [numberFormatter stringFromNumber:upvoteCount];
     
@@ -252,6 +149,9 @@ static NSString *CellIdentifier = @"PartyCell";
             
             if (!succeeded) {
                 actualTableViewCell.upvoteCountLabel.text = originalUpvoteCount;
+            } else
+            {
+                // [party addUniqueObject:[PFUser currentUser] forKey:@"upvoters"];
             }
         }];
     } else {
@@ -262,6 +162,9 @@ static NSString *CellIdentifier = @"PartyCell";
             
             if (!succeeded) {
                 actualTableViewCell.upvoteCountLabel.text = originalUpvoteCount;
+            } else
+            {
+                // [party removeObject:[PFUser currentUser] forKey:@"upvoters"];
             }
         }];
     }
@@ -290,7 +193,6 @@ static NSString *CellIdentifier = @"PartyCell";
 - (void)logInViewController:(PFLogInViewController *)logInController didLogInUser:(PFUser *)user
 {
     [self dismissViewControllerAnimated:YES completion:NULL];
-    [PTHUtility updateFacebookEventsForUser:user];
 }
 
 -(void)logInViewController:(PFLogInViewController *)logInController didFailToLogInWithError:(NSError *)error
@@ -380,7 +282,7 @@ static NSString *CellIdentifier = @"PartyCell";
     // Assign our sign up controll to be displayed from the login controller
     [logInViewController setSignUpController:signUpViewController];
     
-    [logInViewController setFacebookPermissions:[NSArray arrayWithObjects:@"public_profile",@"user_friends",@"email",@"user_events", nil]];
+    [logInViewController setFacebookPermissions:[NSArray arrayWithObjects:@"public_profile",@"user_friends",@"email", nil]];
     [logInViewController setFields: PFLogInFieldsUsernameAndPassword | PFLogInFieldsLogInButton | PFLogInFieldsSignUpButton | PFLogInFieldsTwitter | PFLogInFieldsFacebook | PFLogInFieldsDismissButton];
     
     // Present the log in view controller
@@ -408,6 +310,25 @@ static NSString *CellIdentifier = @"PartyCell";
     
     [self beginLogin];
 
+}
+
+#pragma mark - Prepare for segue
+
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
+{
+    if ([segue.identifier isEqualToString:@"TopToAddPartySegue"])
+    {
+        UINavigationController *navController = (UINavigationController *)segue.destinationViewController;
+        PTHAddPartyTableViewController *addPartyVC = (PTHAddPartyTableViewController *)[navController topViewController];
+        addPartyVC.delegate = self;
+    }
+}
+
+#pragma mark - PTHAddPartyTableViewControllerDelegate
+
+- (void)didAddParty:(PFObject *)party
+{
+    [self loadObjects];
 }
 
 @end

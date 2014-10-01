@@ -11,10 +11,28 @@
 #import <ParseFacebookUtils/PFFacebookUtils.h>
 #import "PTHConstants.h"
 #import "PTHCache.h"
+#import <Bolts/Bolts.h>
 
 @implementation PTHUtility
 
-#pragma mark Like Photos
+#pragma mark - User Utilities
+
++ (BOOL)userArray:(NSArray *)userArray containsUser:(PFUser *)user
+{
+    NSPredicate *constainsUser = [NSPredicate predicateWithFormat:@"objectId = %@",[user objectId]];
+    NSUInteger indexOfUser = [userArray indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
+        return [constainsUser evaluateWithObject:obj];
+    }];
+    
+    if (indexOfUser == NSNotFound)
+    {
+        return NO;
+    }
+    
+    return YES;
+}
+
+#pragma mark - Upvote Parties
 
 + (void)upvotePartyInBackground:(id)party block:(void (^)(BOOL succeeded, NSError *error))completionBlock {
     PFQuery *queryExistingUpvotes = [PFQuery queryWithClassName:kPTHActivityClassKey];
@@ -45,38 +63,9 @@
             if (completionBlock) {
                 completionBlock(succeeded,error);
             }
-            
-            // refresh cache
-            PFQuery *query = [PTHUtility queryForActivitiesOnParty:party cachePolicy:kPFCachePolicyNetworkOnly];
-            [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
-                if (!error) {
-                    
-                    NSMutableArray *upvoters = [NSMutableArray array];
-                    NSMutableArray *commenters = [NSMutableArray array];
-                    
-                    BOOL isUpvotedByCurrentUser = NO;
-                    
-                    for (PFObject *activity in objects) {
-                        if ([[activity objectForKey:kPTHActivityTypeKey] isEqualToString:kPTHActivityTypeUpvote] && [activity objectForKey:kPTHActivityFromUserKey]) {
-                            [upvoters addObject:[activity objectForKey:kPTHActivityFromUserKey]];
-                        } else if ([[activity objectForKey:kPTHActivityTypeKey] isEqualToString:kPTHActivityTypeComment] && [activity objectForKey:kPTHActivityFromUserKey]) {
-                            [commenters addObject:[activity objectForKey:kPTHActivityFromUserKey]];
-                        }
-                        
-                        if ([[[activity objectForKey:kPTHActivityFromUserKey] objectId] isEqualToString:[[PFUser currentUser] objectId]]) {
-                            if ([[activity objectForKey:kPTHActivityTypeKey] isEqualToString:kPTHActivityTypeUpvote]) {
-                                isUpvotedByCurrentUser = YES;
-                            }
-                        }
-                    }
-                    
-                    [[PTHCache sharedCache] setAttributesForParty:party upvoters:upvoters commenters:commenters upvotedByCurrentUser:isUpvotedByCurrentUser];
-                }
                 /*
                 [[NSNotificationCenter defaultCenter] postNotificationName:PAPUtilityUserLikedUnlikedPhotoCallbackFinishedNotification object:photo userInfo:[NSDictionary dictionaryWithObject:[NSNumber numberWithBool:succeeded] forKey:PAPPhotoDetailsViewControllerUserLikedUnlikedPhotoNotificationUserInfoLikedKey]];
                  */
-            }];
-            
         }];
     }];
     
@@ -97,37 +86,9 @@
             if (completionBlock) {
                 completionBlock(YES,nil);
             }
-            
-            // refresh cache
-            PFQuery *query = [PTHUtility queryForActivitiesOnParty:party cachePolicy:kPFCachePolicyNetworkOnly];
-            [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
-                if (!error) {
-                    
-                    NSMutableArray *upvoters = [NSMutableArray array];
-                    NSMutableArray *commenters = [NSMutableArray array];
-                    
-                    BOOL isUpvotedByCurrentUser = NO;
-                    
-                    for (PFObject *activity in objects) {
-                        if ([[activity objectForKey:kPTHActivityTypeKey] isEqualToString:kPTHActivityTypeUpvote]) {
-                            [upvoters addObject:[activity objectForKey:kPTHActivityFromUserKey]];
-                        } else if ([[activity objectForKey:kPTHActivityTypeKey] isEqualToString:kPTHActivityTypeComment]) {
-                            [commenters addObject:[activity objectForKey:kPTHActivityFromUserKey]];
-                        }
-                        
-                        if ([[[activity objectForKey:kPTHActivityFromUserKey] objectId] isEqualToString:[[PFUser currentUser] objectId]]) {
-                            if ([[activity objectForKey:kPTHActivityTypeKey] isEqualToString:kPTHActivityTypeUpvote]) {
-                                isUpvotedByCurrentUser = YES;
-                            }
-                        }
-                    }
-                    
-                    [[PTHCache sharedCache] setAttributesForParty:party upvoters:upvoters commenters:commenters upvotedByCurrentUser:isUpvotedByCurrentUser];
-                }
                 /*
                 [[NSNotificationCenter defaultCenter] postNotificationName:PAPUtilityUserLikedUnlikedPhotoCallbackFinishedNotification object:photo userInfo:[NSDictionary dictionaryWithObject:[NSNumber numberWithBool:NO] forKey:PAPPhotoDetailsViewControllerUserLikedUnlikedPhotoNotificationUserInfoLikedKey]];
                  */
-            }];
             
         } else {
             if (completionBlock) {
@@ -137,107 +98,91 @@
     }];  
 }
 
-#pragma mark Activities
-
-+ (PFQuery *)queryForActivitiesOnParty:(PFObject *)party cachePolicy:(PFCachePolicy)cachePolicy {
-    PFQuery *queryUpvotes = [PFQuery queryWithClassName:kPTHActivityClassKey];
-    [queryUpvotes whereKey:kPTHActivityPartyKey equalTo:party];
-    [queryUpvotes whereKey:kPTHActivityTypeKey equalTo:kPTHActivityTypeUpvote];
-    
-    PFQuery *queryComments = [PFQuery queryWithClassName:kPTHActivityClassKey];
-    [queryComments whereKey:kPTHActivityPartyKey equalTo:party];
-    [queryComments whereKey:kPTHActivityTypeKey equalTo:kPTHActivityTypeComment];
-    
-    PFQuery *query = [PFQuery orQueryWithSubqueries:[NSArray arrayWithObjects:queryUpvotes,queryComments,nil]];
-    [query setCachePolicy:cachePolicy];
-    [query includeKey:kPTHActivityFromUserKey];
-    [query includeKey:kPTHActivityPartyKey];
-    
-    return query;
-}
-
-
-+ (void)updateFacebookEventsForUser:(PFUser *)user
++ (NSDictionary *)getFbEventsForCurrentUser
 {
-    // Request events/created
     
-    [FBRequestConnection startWithGraphPath:@"me/events/created?fields=name,description,start_time,end_time,location,venue,privacy"
-                          completionHandler:^(FBRequestConnection *connection, id result, NSError *error) {
-                              if (!error) {
-                                  
-                                  [user setObject:result forKey:@"fbEventsCreated"];
-                                  
-                                  // Request events/attending
-                                  
-                                  [FBRequestConnection startWithGraphPath:@"me/events/attending?fields=name,description,start_time,end_time,location,venue,privacy"
-                                                        completionHandler:^(FBRequestConnection *connection, id result, NSError *error) {
-                                                            if (!error) {
-                                                                [user setObject:result forKey:@"fbEventsAttending"];
-                                                                
-                                                                // Request events/maybe
-                                                                
-                                                                [FBRequestConnection startWithGraphPath:@"me/events/maybe?fields=name,description,start_time,end_time,location,venue,privacy"
-                                                                                      completionHandler:^(FBRequestConnection *connection, id result, NSError *error) {
-                                                                                          if (!error) {
-                                                                                              [user setObject:result forKey:@"fbEventsMaybe"];
-                                                                                              
-                                                                                              // Request events/declined
-                                                                                              
-                                                                                              [FBRequestConnection startWithGraphPath:@"me/events/declined?fields=name,description,start_time,end_time,location,venue,privacy"
-                                                                                                                    completionHandler:^(FBRequestConnection *connection, id result, NSError *error) {
-                                                                                                                        if (!error) {
-                                                                                                                            [user setObject:result forKey:@"fbEventsDeclined"];
-                                                                                                                            
-                                                                                                                            // Request events/not_replied
-                                                                                                                            
-                                                                                                                            [FBRequestConnection startWithGraphPath:@"me/events/not_replied?fields=name,description,start_time,end_time,location,venue,privacy"
-                                                                                                                                                  completionHandler:^(FBRequestConnection *connection, id result, NSError *error) {
-                                                                                                                                                      if (!error) {
-                                                                                                                                                          [user setObject:result forKey:@"fbEventsNotReplied"];
-                                                                                                                                                          [user saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
-                                                                                                                                                              if (!succeeded)
-                                                                                                                                                              {
-                                                                                                                                                                  NSLog(@"Error saving user events: %@", [error localizedDescription]);
-                                                                                                                                                              } else
-                                                                                                                                                              {
-                                                                                                                                                                  NSLog(@"User events saved!");
-                                                                                                                                                              }
-                                                                                                                                                          }];
-                                                                                                                                                      } else {
-                                                                                                                                                          // An error occurred, we need to handle the error
-                                                                                                                                                          // See: https://developers.facebook.com/docs/ios/errors
-                                                                                                                                                          
-                                                                                                                                                          NSLog(@"Error retrieving events/not_replied: %@", [error localizedDescription]);
-                                                                                                                                                      }
-                                                                                                                                                  }];
-                                                                                                                        } else {
-                                                                                                                            // An error occurred, we need to handle the error
-                                                                                                                            // See: https://developers.facebook.com/docs/ios/errors
-                                                                                                                            
-                                                                                                                            NSLog(@"Error retrieving events/declined: %@", [error localizedDescription]);
-                                                                                                                        }
-                                                                                                                    }];
-                                                                                          } else {
-                                                                                              // An error occurred, we need to handle the error
-                                                                                              // See: https://developers.facebook.com/docs/ios/errors
-                                                                                              
-                                                                                              NSLog(@"Error retrieving events/maybe: %@", [error localizedDescription]);
-                                                                                          }
-                                                                                      }];
-                                                            } else {
-                                                                // An error occurred, we need to handle the error
-                                                                // See: https://developers.facebook.com/docs/ios/errors
-                                                                
-                                                                NSLog(@"Error retrieving events/attending: %@", [error localizedDescription]);
-                                                            }
-                                                        }];
-                              } else {
-                                  // An error occurred, we need to handle the error
-                                  // See: https://developers.facebook.com/docs/ios/errors
-                                  
-                                  NSLog(@"Error retrieving events/created: %@", [error localizedDescription]);
-                              }
-                          }];
+    __block NSMutableDictionary *eventsDictionary = [NSMutableDictionary dictionary];
+    
+    NSArray *permissions = [[[FBSession activeSession] accessTokenData] permissions];
+    
+    if (![permissions containsObject:@"user_events"])
+    {
+        __block BOOL permissionGranted;
+        
+        [PFFacebookUtils reauthorizeUser:[PFUser currentUser] withPublishPermissions:[NSArray arrayWithObjects:@"public_profile",@"user_friends",@"email",@"user_events", nil] audience:FBSessionDefaultAudienceFriends block:^(BOOL succeeded, NSError *error) {
+            if (!succeeded)
+            {
+                NSLog(@"Error obtaining user_events permission: %@", [error localizedDescription]);
+                [eventsDictionary setObject:error forKey:@"authError"];
+            }
+            permissionGranted = succeeded;
+        }];
+        if (!permissionGranted)
+        {
+            return eventsDictionary;
+        }
+    }
+    
+    FBRequest *createdRequest = [FBRequest requestForGraphPath:@"me/events/created?fields=name,description,start_time,end_time,location,venue,privacy"];
+    FBRequest *attendingRequest = [FBRequest requestForGraphPath:@"me/events/attending?fields=name,description,start_time,end_time,location,venue,privacy"];
+    FBRequest *maybeRequest = [FBRequest requestForGraphPath:@"me/events/maybe?fields=name,description,start_time,end_time,location,venue,privacy"];
+    FBRequest *notRepliedRequest = [FBRequest requestForGraphPath:@"me/events/not_replied?fields=name,description,start_time,end_time,location,venue,privacy"];
+    FBRequest *declinedRequest = [FBRequest requestForGraphPath:@"me/events/declined?fields=name,description,start_time,end_time,location,venue,privacy"];
+    
+    FBRequestConnection *requestConnection = [[FBRequestConnection alloc] init];
+    
+    [requestConnection addRequest:createdRequest completionHandler:^(FBRequestConnection *connection, id result, NSError *error) {
+        if (!error)
+        {
+            [eventsDictionary setObject:result forKey:kPTHFbEventsCreated];
+        } else
+        {
+            [eventsDictionary setObject:error forKey:kPTHFbEventsCreated];
+        }
+    }];
+    
+    [requestConnection addRequest:attendingRequest completionHandler:^(FBRequestConnection *connection, id result, NSError *error) {
+        if (!error)
+        {
+            [eventsDictionary setObject:result forKey:kPTHFbEventsAttending];
+        } else
+        {
+            [eventsDictionary setObject:error forKey:kPTHFbEventsAttending];
+        }
+    }];
+    
+    [requestConnection addRequest:maybeRequest completionHandler:^(FBRequestConnection *connection, id result, NSError *error) {
+        if (!error)
+        {
+            [eventsDictionary setObject:result forKey:kPTHFbEventsMaybe];
+        } else
+        {
+            [eventsDictionary setObject:error forKey:kPTHFbEventsMaybe];
+        }
+    }];
+    
+    [requestConnection addRequest:notRepliedRequest completionHandler:^(FBRequestConnection *connection, id result, NSError *error) {
+        if (!error)
+        {
+            [eventsDictionary setObject:result forKey:kPTHFbEventsNotReplied];
+        } else
+        {
+            [eventsDictionary setObject:error forKey:kPTHFbEventsNotReplied];
+        }
+    }];
+    
+    [requestConnection addRequest:declinedRequest completionHandler:^(FBRequestConnection *connection, id result, NSError *error) {
+        if (!error)
+        {
+            [eventsDictionary setObject:result forKey:kPTHFbEventsDeclined];
+        } else
+        {
+            [eventsDictionary setObject:error forKey:kPTHFbEventsDeclined];
+        }
+    }];
+    
+    [requestConnection start];
+    NSLog(@"eventsDictionary = %@", eventsDictionary);
+    return eventsDictionary;
 }
-
 @end

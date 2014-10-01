@@ -47,125 +47,6 @@
     [self.cache removeAllObjects];
 }
 
-- (void)setAttributesForParty:(PFObject *)party upvoters:(NSArray *)upvoters commenters:(NSArray *)commenters upvotedByCurrentUser:(BOOL)upvotedByCurrentUser
-{
-    NSDictionary *attributes = [NSDictionary dictionaryWithObjectsAndKeys:
-                                [NSNumber numberWithBool:upvotedByCurrentUser],kPTHPartyAttributesIsUpvotedByCurrentUserKey,
-                                @([upvoters count]), kPTHPartyAttributesUpvoteCountKey,
-                                upvoters, kPTHPartyAttributesUpvotersKey,
-                                @([commenters count]), kPTHPartyAttributesCommentCountKey,
-                                commenters, kPTHPartyAttributesCommentersKey,
-                                nil];
-    
-    [self setAttributes:attributes forParty:party];
-}
-
-- (NSDictionary *)attributesForParty:(PFObject *)party
-{
-    NSString *key = [self keyForParty:party];
-    return [self.cache objectForKey:key];
-}
-
-- (NSNumber *)upvoteCountForParty:(PFObject *)party
-{
-    NSDictionary *attributes = [self attributesForParty:party];
-    if (attributes)
-    {
-        return [attributes objectForKey:kPTHPartyAttributesUpvoteCountKey];
-    }
-    
-    return [NSNumber numberWithInt:0];
-}
-- (NSNumber *)commentCountForParty:(PFObject *)party
-{
-    NSDictionary *attributes = [self attributesForParty:party];
-    if (attributes)
-    {
-        return [attributes objectForKey:kPTHPartyAttributesCommentCountKey];
-    }
-    
-    return [NSNumber numberWithInt:0];
-}
-
-- (NSArray *)upvotersForParty:(PFObject *)party
-{
-    NSDictionary *attributes = [self attributesForParty:party];
-    if (attributes)
-    {
-        return [attributes objectForKey:kPTHPartyAttributesUpvotersKey];
-    }
-    
-    return [NSArray array];
-}
-
-- (NSArray *)commentersForParty:(PFObject *)party
-{
-    NSDictionary *attributes = [self attributesForParty:party];
-    if (attributes)
-    {
-        return [attributes objectForKey:kPTHPartyAttributesCommentersKey];
-    }
-    
-    return [NSArray array];
-}
-
-- (void)setPartyIsUpvotedByCurrentUser:(PFObject *)party upvoted:(BOOL)upvoted
-{
-    NSMutableDictionary *attributes = [NSMutableDictionary dictionaryWithDictionary:[self attributesForParty:party]];
-    [attributes setObject:[NSNumber numberWithBool:upvoted] forKey:kPTHPartyAttributesIsUpvotedByCurrentUserKey];
-    [self setAttributes:attributes forParty:party];
-}
-
-- (BOOL)isPartyUpvotedByCurrentUser:(PFObject *)party
-{
-    NSDictionary *attributes = [self attributesForParty:party];
-    if (attributes)
-    {
-        return [[attributes objectForKey:kPTHPartyAttributesIsUpvotedByCurrentUserKey] boolValue];
-    }
-    
-    return NO;
-}
-
-- (void)incrementUpvoteCountForParty:(PFObject *)party
-{
-    NSNumber *upvoteCount = [NSNumber numberWithInt:[[self upvoteCountForParty:party] intValue] + 1];
-    NSMutableDictionary *attributes = [NSMutableDictionary dictionaryWithDictionary:[self attributesForParty:party]];
-    [attributes setObject:upvoteCount forKey:kPTHPartyAttributesUpvoteCountKey];
-    [self setAttributes:attributes forParty:party];
-}
-
-- (void)decrementUpvoteCountForParty:(PFObject *)party
-{
-    NSNumber *upvoteCount = [NSNumber numberWithInt:[[self upvoteCountForParty:party] intValue] - 1];
-    if ([upvoteCount intValue] < 0)
-    {
-        return;
-    }
-    NSMutableDictionary *attributes = [NSMutableDictionary dictionaryWithDictionary:[self attributesForParty:party]];
-    [attributes setObject:upvoteCount forKey:kPTHPartyAttributesUpvoteCountKey];
-    [self setAttributes:attributes forParty:party];
-}
-
-- (void)incrementCommentCountForParty:(PFObject *)party
-{
-    NSNumber *commentCount = [NSNumber numberWithInt:[[self commentCountForParty:party] intValue] + 1];
-    NSMutableDictionary *attributes = [NSMutableDictionary dictionaryWithDictionary:[self attributesForParty:party]];
-    [attributes setObject:commentCount forKey:kPTHPartyAttributesCommentCountKey];
-}
-
-- (void)decrementCommentCountForParty:(PFObject *)party
-{
-    NSNumber *commentCount = [NSNumber numberWithInt:[[self commentCountForParty:party] intValue] -1];
-    if ([commentCount intValue] < 0)
-    {
-        return;
-    }
-    NSMutableDictionary *attributes = [NSMutableDictionary dictionaryWithDictionary:[self attributesForParty:party]];
-    [attributes setObject:commentCount forKey:kPTHPartyAttributesCommentCountKey];
-    [self setAttributes:attributes forParty:party];
-}
-
 - (NSDictionary *)attributesForUser:(PFUser *)user
 {
     NSString *key = [self keyForUser:user];
@@ -244,21 +125,10 @@
 
 #pragma mark - ()
 
-- (void)setAttributes:(NSDictionary *)attributes forParty:(PFObject *)party
-{
-    NSString *key = [self keyForParty:party];
-    [self.cache setObject:attributes forKey:key];
-}
-
 - (void)setAttributes:(NSDictionary *)attributes forUser:(PFObject *)user
 {
     NSString *key = [self keyForUser:user];
     [self.cache setObject:attributes forKey:key];
-}
-
-- (NSString *)keyForParty:(PFObject *)party
-{
-    return [NSString stringWithFormat:@"party_%@", [party objectId]];
 }
 
 - (NSString *)keyForUser:(PFObject *)user

@@ -44,8 +44,15 @@ extern NSString *const kPTHUserProfilePicMediumKey;
 extern NSString *const kPTHUserFacebookFriendsKey;
 extern NSString *const kPTHUserAlreadyAutoFollowedFacebookFriendsKey;
 
+#pragma mark - Facebook Event Keys
 
-#pragma mark - PFObject Photo Class
+extern NSString *const kPTHFbEventsCreated;
+extern NSString *const kPTHFbEventsAttending;
+extern NSString *const kPTHFbEventsMaybe;
+extern NSString *const kPTHFbEventsNotReplied;
+extern NSString *const kPTHFbEventsDeclined;
+
+#pragma mark - PFObject Party Class
 // Class key
 extern NSString *const kPTHPartyClassKey;
 
@@ -56,15 +63,14 @@ extern NSString *const kPTHPartyStartTimeKey;
 extern NSString *const kPTHPartyEndTimeKey;
 extern NSString *const kPTHPartyFbEventIdKey;
 extern NSString *const kPTHPartyUserKey;
+extern NSString *const kPTHPartyVenueKey;
+extern NSString *const kPTHPartyDescriptionKey;
+extern NSString *const kPTHPartyLocationKey;
+extern NSString *const kPTHPartyPrivacyKey;
+extern NSString *const kPTHPartyCommentCountKey;
+extern NSString *const kPTHPartyUpvotersKey;
+extern NSString *const kPTHPartyUpvoteCountKey;
 
-
-#pragma mark - Cached Photo Attributes
-// keys
-extern NSString *const kPTHPartyAttributesIsUpvotedByCurrentUserKey;
-extern NSString *const kPTHPartyAttributesUpvoteCountKey;
-extern NSString *const kPTHPartyAttributesUpvotersKey;
-extern NSString *const kPTHPartyAttributesCommentCountKey;
-extern NSString *const kPTHPartyAttributesCommentersKey;
 
 #pragma mark - Cached User Attributes
 // keys

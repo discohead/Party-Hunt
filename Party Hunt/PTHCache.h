@@ -14,18 +14,6 @@
 + (id)sharedCache;
 
 - (void)clear;
-- (void)setAttributesForParty:(PFObject *)party upvoters:(NSArray *)upvoters commenters:(NSArray *)commenters upvotedByCurrentUser:(BOOL)upvotedByCurrentUser;
-- (NSDictionary *)attributesForParty:(PFObject *)party;
-- (NSNumber *)upvoteCountForParty:(PFObject *)party;
-- (NSNumber *)commentCountForParty:(PFObject *)party;
-- (NSArray *)upvotersForParty:(PFObject *)party;
-- (NSArray *)commentersForParty:(PFObject *)party;
-- (void)setPartyIsUpvotedByCurrentUser:(PFObject *)party upvoted:(BOOL)upvoted;
-- (BOOL)isPartyUpvotedByCurrentUser:(PFObject *)party;
-- (void)incrementUpvoteCountForParty:(PFObject *)party;
-- (void)decrementUpvoteCountForParty:(PFObject *)party;
-- (void)incrementCommentCountForParty:(PFObject *)party;
-- (void)decrementCommentCountForParty:(PFObject *)party;
 
 - (NSDictionary *)attributesForUser:(PFUser *)user;
 - (NSNumber *)partyCountForUser:(PFUser *)user;
