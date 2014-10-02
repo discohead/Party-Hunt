@@ -12,7 +12,6 @@
 @interface PTHCache ()
 
 @property (nonatomic, strong) NSCache *cache;
--(void)setAttributes:(NSDictionary *)attributes forParty:(PFObject *)party;
 
 @end
 

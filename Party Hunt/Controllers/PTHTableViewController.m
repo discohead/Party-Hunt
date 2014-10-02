@@ -7,18 +7,11 @@
 //
 
 #import "PTHTableViewController.h"
-#import <FacebookSDK/FacebookSDK.h>
-#import <ParseFacebookUtils/PFFacebookUtils.h>
-//#import "PTHAddPartyTableViewController.h"
-#import "PTHPartyTableViewCell.h"
-#import "PTHUtility.h"
-#import "PTHCache.h"
-#import "PTHConstants.h"
-
-static NSString *CellIdentifier = @"PartyCell";
 
 
-@interface PTHTableViewController () <PFLogInViewControllerDelegate, PFSignUpViewControllerDelegate, PTHPartyTableViewCellDelegate>
+@interface PTHTableViewController () <PFLogInViewControllerDelegate, PFSignUpViewControllerDelegate>
+@property (strong, nonatomic) NSDate *selectedDate;
+@property CGRect initialFrame;
 
 @end
 
@@ -34,9 +27,48 @@ static NSString *CellIdentifier = @"PartyCell";
     return self;
 }
 
+- (CLLocationManager *)locationManager
+{
+    if (_locationManager != nil)
+    {
+        return _locationManager;
+    }
+    
+    _locationManager = [[CLLocationManager alloc] init];
+    [_locationManager setDesiredAccuracy:kCLLocationAccuracyKilometer];
+    [_locationManager setDelegate:self];
+    
+    return _locationManager;
+}
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+    if ([CLLocationManager authorizationStatus] == kCLAuthorizationStatusNotDetermined )
+    {
+        [self.locationManager requestWhenInUseAuthorization];
+    }
+    
+    [[self locationManager] startUpdatingLocation];
+    
+    // Self-sizing table view cells in iOS 8 require that the rowHeight property of the table view be set to the constant UITableViewAutomaticDimension
+    self.tableView.rowHeight = UITableViewAutomaticDimension;
+    
+    // Self-sizing table view cells in iOS 8 are enabled when the estimatedRowHeight property of the table view is set to a non-zero value.
+    // Setting the estimated row height prevents the table view from calling tableView:heightForRowAtIndexPath: for every row in the table on first load;
+    // it will only be called as cells are about to scroll onscreen. This is a major performance optimization.
+    self.tableView.estimatedRowHeight = 82.0; // set this to whatever your "average" cell height is; it doesn't need to be very accurate
+    
+    self.datePicker = [[DIDatepicker alloc] initWithFrame:CGRectMake(0.0f, 0.0f, self.tableView.frame.size.width, 60)];
+    
+    [self.datePicker addTarget:self action:@selector(updateSelectedDate) forControlEvents:UIControlEventValueChanged];
+    
+    [self.datePicker fillDatesFromCurrentDate:14];
+    
+    [self.datePicker selectDateAtIndex:0];
+    
+    [self.tableView setTableHeaderView:self.datePicker];
     
     PFUser *user = [PFUser currentUser];
     if (!user)
@@ -45,77 +77,35 @@ static NSString *CellIdentifier = @"PartyCell";
     }
 }
 
+
+
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath object:(PFObject *)object
 {
     
-    static NSString *CellIdentifier = @"PartyCell";
-    
-    PTHPartyTableViewCell *cell = (PTHPartyTableViewCell *)[tableView dequeueReusableCellWithIdentifier:CellIdentifier];
+    PTHPartyTableViewCell *cell = (PTHPartyTableViewCell *)[tableView dequeueReusableCellWithIdentifier:kPTHPartyCellIdentifier];
     
     if (cell == nil) {
-        cell = [[PTHPartyTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
+        cell = [[PTHPartyTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:kPTHPartyCellIdentifier];
     }
     
    [self configureCell:cell forObject:object atIndexPath:indexPath];
+    
+    // Make sure the constraints have been added to this cell, since it may have just been created from scratch
+    [cell setNeedsUpdateConstraints];
+    [cell updateConstraintsIfNeeded];
     
     return cell;
 }
 
 - (void)configureCell:(PTHPartyTableViewCell *)cell forObject:(PFObject *)party atIndexPath:(NSIndexPath *)indexPath
 {
-    NSArray *upvoters = [party objectForKey:kPTHPartyUpvotersKey];
-    BOOL isUpvotedByCurrentUser = [PTHUtility userArray:upvoters containsUser:[PFUser currentUser]];
-    [cell setUpvoteStatus:isUpvotedByCurrentUser];
-    
-    cell.nameLabel.text = [party valueForKey:kPTHPartyNameKey];
-    //cell.bylineLabel.text = [object objectForKey:@"description"];
-    
-    cell.upvoteCountLabel.text = [NSString stringWithFormat:@"%@",[party valueForKey:kPTHPartyUpvoteCountKey]];
-    cell.commentCountLabel.text = [NSString stringWithFormat:@"%@",[party valueForKey:kPTHPartyCommentCountKey]];
-    
-    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-    [dateFormatter setDateFormat:@"yyyy-MM-dd'T'HH:mm:ssZ"];
-    
-    NSDateFormatter *hourFormatter = [[NSDateFormatter alloc] init];
-    [hourFormatter setDateFormat:@"ha"];
-    
-    NSString *startTime = [party valueForKey:kPTHPartyStartTimeKey];
-    NSDate *startDate = [dateFormatter dateFromString:startTime];
-    startTime = [[hourFormatter stringFromDate:startDate] lowercaseString];
-    
-    NSString *endTime = [party valueForKey:kPTHPartyEndTimeKey];
-    NSDate *endDate = [dateFormatter dateFromString:endTime];
-    endTime = [[hourFormatter stringFromDate:endDate] lowercaseString];
-    
-    NSString *hoursString = [NSString stringWithFormat:@"%@ - %@", startTime, endTime];
-    
-    if (!startTime)
-    {
-        hoursString = nil;
-    }
-    
-    if (!endTime)
-    {
-        hoursString = startTime;
-    }
-    
-    cell.hoursLabel.text = hoursString;
-    cell.locationLabel.text = [party valueForKey:kPTHPartyLocationKey];
-    cell.delegate = self;
-}
+    // Sub-classes must override this method
 
-
-- (PFQuery *)queryForTable
-{
-    PFQuery *query = [PFQuery queryWithClassName:kPTHPartyClassKey];
-    [query orderByDescending:kPTHPartyUpvoteCountKey];
-    return query;
 }
 
 #pragma mark - PTHPartyTableViewCellDelegate
 
 - (void)partyTableViewCell:(PTHPartyTableViewCell *)partyTableViewCell didTapUpvoteButton:(UIButton *)button {
-
     
     NSIndexPath *indexPath = [self.tableView indexPathForCell:partyTableViewCell];
     PFObject *party = self.objects[indexPath.row];
@@ -170,9 +160,14 @@ static NSString *CellIdentifier = @"PartyCell";
     }
 }
 
-- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+#pragma mark - CLLocationManagerDelegate
+
+- (void)locationManager:(CLLocationManager *)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status
 {
-    return 82;
+    if (status == kCLAuthorizationStatusAuthorizedWhenInUse)
+    {
+        [self loadObjects];
+    }
 }
 
 #pragma mark - PFLogInViewControllerDelegate
@@ -267,7 +262,7 @@ static NSString *CellIdentifier = @"PartyCell";
     NSLog(@"User dismissed the signUpViewController");
 }
 
-#pragma mark - Log In
+#pragma mark - Log In / Out
 
 - (void)beginLogin
 {
@@ -312,23 +307,68 @@ static NSString *CellIdentifier = @"PartyCell";
 
 }
 
-#pragma mark - Prepare for segue
-
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
-{
-    if ([segue.identifier isEqualToString:@"TopToAddPartySegue"])
-    {
-        UINavigationController *navController = (UINavigationController *)segue.destinationViewController;
-        PTHAddPartyTableViewController *addPartyVC = (PTHAddPartyTableViewController *)[navController topViewController];
-        addPartyVC.delegate = self;
+- (void)showHeader:(BOOL)show animated:(BOOL)animated {
+    
+    CGRect closedFrame = CGRectMake(0, 0, self.view.frame.size.width, 0);
+    CGRect newFrame = show?self.initialFrame:closedFrame;
+    
+    if(animated){
+        // The UIView animation block handles the animation of our header view
+        [UIView beginAnimations:nil context:nil];
+        [UIView setAnimationDuration:0.3];
+        [UIView setAnimationCurve:UIViewAnimationCurveEaseInOut];
+        
+        // beginUpdates and endUpdates trigger the animation of our cells
+        [self.tableView beginUpdates];
+    }
+    
+    self.datePicker.frame = newFrame;
+    [self.tableView setTableHeaderView:self.datePicker];
+    
+    if(animated){
+        [self.tableView endUpdates];
+        [UIView commitAnimations];
     }
 }
 
-#pragma mark - PTHAddPartyTableViewControllerDelegate
-
-- (void)didAddParty:(PFObject *)party
+- (void)updateSelectedDate
 {
+    self.selectedDate = self.datePicker.selectedDate;
     [self loadObjects];
+}
+
+- (void)constrainQueryToSelectedDate:(PFQuery *)query
+{
+    NSDate *selectedDate = self.datePicker.selectedDate;
+    
+    if (!selectedDate)
+    {
+        selectedDate = [NSDate date];
+    }
+    
+    NSDateComponents *dayComponentPrev = [[NSDateComponents alloc] init];
+    NSDateComponents *dayComponentNext = [[NSDateComponents alloc] init];
+    dayComponentPrev.day = -1;
+    dayComponentNext.day = +1;
+    
+    NSCalendar *calendar = [NSCalendar currentCalendar];
+    
+    NSDate *prevDate = [calendar dateByAddingComponents:dayComponentPrev toDate:selectedDate options:0];
+    NSDate *nextDate = [calendar dateByAddingComponents:dayComponentNext toDate:selectedDate options:0];
+    NSDateComponents *componentsPrev = [calendar components:NSCalendarUnitYear|NSCalendarUnitMonth|NSCalendarUnitDay fromDate:prevDate];
+    [componentsPrev setHour:23];
+    [componentsPrev setMinute:59];
+    NSDate *prevOk = [calendar dateFromComponents:componentsPrev];
+    NSLog(@"prevOk = %@", prevOk);
+    
+    NSDateComponents *componentsNext = [calendar components:NSCalendarUnitYear|NSCalendarUnitMonth|NSCalendarUnitDay fromDate:nextDate];
+    [componentsNext setHour:0];
+    [componentsNext setMinute:0];
+    NSDate *nextOk = [calendar dateFromComponents:componentsNext];
+    NSLog(@"nextOk = %@", nextOk);
+    
+    [query whereKey:kPTHPartyStartTimeKey greaterThanOrEqualTo:prevOk];
+    [query whereKey:kPTHPartyStartTimeKey lessThanOrEqualTo:nextOk];
 }
 
 @end

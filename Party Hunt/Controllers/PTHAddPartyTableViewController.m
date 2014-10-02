@@ -15,9 +15,7 @@
 #import "PTHUtility.h"
 
 @interface PTHAddPartyTableViewController () <UIAlertViewDelegate, FBRequestConnectionDelegate>
-
-@property (strong, nonatomic) UIView *loadingView;
-@property (strong, nonatomic) IBOutlet UIActivityIndicatorView *activityIndicator;
+- (IBAction)didPressCancelBarButton:(id)sender;
 
 @end
 
@@ -30,7 +28,6 @@
     {
         self.events = [NSMutableDictionary dictionary];
         [self getFbEventsForCurrentUser];
-        self.loadingView = [[UIView alloc] init];
     }
     return self;
 }
@@ -38,10 +35,14 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     [self.refreshControl addTarget:self action:@selector(getFbEventsForCurrentUser) forControlEvents:UIControlEventValueChanged];
-    self.loadingView.frame = self.tableView.frame;
-    [self.loadingView addSubview:self.activityIndicator];
-    self.activityIndicator.center = self.loadingView.center;
-    self.tableView.hidden = YES;
+    
+    // Self-sizing table view cells in iOS 8 require that the rowHeight property of the table view be set to the constant UITableViewAutomaticDimension
+    self.tableView.rowHeight = UITableViewAutomaticDimension;
+    
+    // Self-sizing table view cells in iOS 8 are enabled when the estimatedRowHeight property of the table view is set to a non-zero value.
+    // Setting the estimated row height prevents the table view from calling tableView:heightForRowAtIndexPath: for every row in the table on first load;
+    // it will only be called as cells are about to scroll onscreen. This is a major performance optimization.
+    self.tableView.estimatedRowHeight = 82.0; // set this to whatever your "average" cell height is; it doesn't need to be very accurate
 
 }
 
@@ -99,7 +100,11 @@
 
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"Cell" forIndexPath:indexPath];
+    
+    cell.textLabel.numberOfLines = 0;
+    cell.textLabel.lineBreakMode = NSLineBreakByWordWrapping;
     
     // Configure the cell...
     switch (indexPath.section)
@@ -208,6 +213,23 @@
     NSMutableDictionary *mutableFbEvent = [fbEvent mutableCopy];
     [mutableFbEvent setObject:fbEvent[@"id"] forKey:kPTHPartyFbEventIdKey];
     [mutableFbEvent removeObjectForKey:@"id"];
+    
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    [dateFormatter setDateFormat:@"yyyy-MM-dd'T'HH:mm:ssZ"];
+    
+    if ([fbEvent objectForKey:kPTHPartyStartTimeKey])
+    {
+        NSString *startTimeString = [fbEvent objectForKey:kPTHPartyStartTimeKey];
+        NSDate *startDate = [dateFormatter dateFromString:startTimeString];
+        [mutableFbEvent setValue:startDate forKey:kPTHPartyStartTimeKey];
+    }
+    if ([fbEvent objectForKey:kPTHPartyEndTimeKey])
+    {
+        NSString *endTimeString = [fbEvent objectForKey:kPTHPartyEndTimeKey];
+        NSDate *endDate = [dateFormatter dateFromString:endTimeString];
+        [mutableFbEvent setValue:endDate forKey:kPTHPartyEndTimeKey];
+    }
+    
     PFObject *party = [PFObject objectWithClassName:kPTHPartyClassKey dictionary:mutableFbEvent];
     
     [party setObject:[PFUser currentUser] forKey:kPTHPartyUserKey];     
@@ -248,92 +270,99 @@
 
 - (void)getFbEventsForCurrentUser
 {
-    
-    NSArray *permissions = [[[FBSession activeSession] accessTokenData] permissions];
-    
-    if (![permissions containsObject:@"user_events"])
+    if ([PFFacebookUtils isLinkedWithUser:[PFUser currentUser]])
     {
-        __block BOOL permissionGranted;
+        NSArray *permissions = [[[FBSession activeSession] accessTokenData] permissions];
         
-        [PFFacebookUtils reauthorizeUser:[PFUser currentUser] withPublishPermissions:[NSArray arrayWithObjects:@"public_profile",@"user_friends",@"email",@"user_events", nil] audience:FBSessionDefaultAudienceFriends block:^(BOOL succeeded, NSError *error) {
-            if (!succeeded)
-            {
-                NSLog(@"Error obtaining user_events permission: %@", [error localizedDescription]);
-                [self.events setObject:error forKey:@"authError"];
-            }
-            permissionGranted = succeeded;
-        }];
-        if (!permissionGranted)
+        if (![permissions containsObject:@"user_events"])
         {
-            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Permissions Error" message:@"This app does not have permission to access your Facebook Events" delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Re-Authorize", nil];
-            [alert show];
+            __block BOOL permissionGranted;
+            
+            [PFFacebookUtils reauthorizeUser:[PFUser currentUser] withPublishPermissions:[NSArray arrayWithObjects:@"public_profile",@"user_friends",@"email",@"user_events", nil] audience:FBSessionDefaultAudienceFriends block:^(BOOL succeeded, NSError *error) {
+                if (!succeeded)
+                {
+                    NSLog(@"Error obtaining user_events permission: %@", [error localizedDescription]);
+                    [self.events setObject:error forKey:@"authError"];
+                }
+                permissionGranted = succeeded;
+            }];
+            if (!permissionGranted)
+            {
+                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Permissions Error" message:@"This app does not have permission to access your Facebook Events" delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Re-Authorize", nil];
+                [alert show];
+            }
         }
+        
+        FBRequest *createdRequest = [FBRequest requestForGraphPath:@"me/events/created?fields=name,description,start_time,end_time,location,venue,privacy"];
+        FBRequest *attendingRequest = [FBRequest requestForGraphPath:@"me/events/attending?fields=name,description,start_time,end_time,location,venue,privacy"];
+        FBRequest *maybeRequest = [FBRequest requestForGraphPath:@"me/events/maybe?fields=name,description,start_time,end_time,location,venue,privacy"];
+        FBRequest *notRepliedRequest = [FBRequest requestForGraphPath:@"me/events/not_replied?fields=name,description,start_time,end_time,location,venue,privacy"];
+        FBRequest *declinedRequest = [FBRequest requestForGraphPath:@"me/events/declined?fields=name,description,start_time,end_time,location,venue,privacy"];
+        
+        FBRequestConnection *requestConnection = [[FBRequestConnection alloc] init];
+        
+        [requestConnection addRequest:createdRequest completionHandler:^(FBRequestConnection *connection, id result, NSError *error) {
+            if (!error)
+            {
+                [self.events setObject:result[@"data"] forKey:kPTHFbEventsCreated];
+            } else
+            {
+                [self.events setObject:error forKey:kPTHFbEventsCreated];
+                NSLog(@"Error getting events/created: %@", [error localizedDescription]);
+            }
+        }];
+        
+        [requestConnection addRequest:attendingRequest completionHandler:^(FBRequestConnection *connection, id result, NSError *error) {
+            if (!error)
+            {
+                [self.events setObject:result[@"data"] forKey:kPTHFbEventsAttending];
+            } else
+            {
+                [self.events setObject:error forKey:kPTHFbEventsAttending];
+                NSLog(@"Error getting events/attending: %@", [error localizedDescription]);
+            }
+        }];
+        
+        [requestConnection addRequest:maybeRequest completionHandler:^(FBRequestConnection *connection, id result, NSError *error) {
+            if (!error)
+            {
+                [self.events setObject:result[@"data"] forKey:kPTHFbEventsMaybe];
+            } else
+            {
+                [self.events setObject:error forKey:kPTHFbEventsMaybe];
+                NSLog(@"Error getting events/maybe: %@", [error localizedDescription]);
+            }
+        }];
+        
+        [requestConnection addRequest:notRepliedRequest completionHandler:^(FBRequestConnection *connection, id result, NSError *error) {
+            if (!error)
+            {
+                [self.events setObject:result[@"data"] forKey:kPTHFbEventsNotReplied];
+            } else
+            {
+                [self.events setObject:error forKey:kPTHFbEventsNotReplied];
+                NSLog(@"Error getting events/not_replied: %@", [error localizedDescription]);
+            }
+        }];
+        
+        [requestConnection addRequest:declinedRequest completionHandler:^(FBRequestConnection *connection, id result, NSError *error) {
+            if (!error)
+            {
+                [self.events setObject:result[@"data"] forKey:kPTHFbEventsDeclined];
+            } else
+            {
+                [self.events setObject:error forKey:kPTHFbEventsDeclined];
+                NSLog(@"Error getting events/declined: %@", [error localizedDescription]);
+            }
+        }];
+        requestConnection.delegate = self;
+        [requestConnection start];
+    } else
+    {
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Login Error" message:@"No active Facebook session found" delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Log in w/ Facebook", nil];
+        [alert show];
     }
     
-    FBRequest *createdRequest = [FBRequest requestForGraphPath:@"me/events/created?fields=name,description,start_time,end_time,location,venue,privacy"];
-    FBRequest *attendingRequest = [FBRequest requestForGraphPath:@"me/events/attending?fields=name,description,start_time,end_time,location,venue,privacy"];
-    FBRequest *maybeRequest = [FBRequest requestForGraphPath:@"me/events/maybe?fields=name,description,start_time,end_time,location,venue,privacy"];
-    FBRequest *notRepliedRequest = [FBRequest requestForGraphPath:@"me/events/not_replied?fields=name,description,start_time,end_time,location,venue,privacy"];
-    FBRequest *declinedRequest = [FBRequest requestForGraphPath:@"me/events/declined?fields=name,description,start_time,end_time,location,venue,privacy"];
-    
-    FBRequestConnection *requestConnection = [[FBRequestConnection alloc] init];
-    
-    [requestConnection addRequest:createdRequest completionHandler:^(FBRequestConnection *connection, id result, NSError *error) {
-        if (!error)
-        {
-            [self.events setObject:result[@"data"] forKey:kPTHFbEventsCreated];
-        } else
-        {
-            [self.events setObject:error forKey:kPTHFbEventsCreated];
-            NSLog(@"Error getting events/created: %@", [error localizedDescription]);
-        }
-    }];
-    
-    [requestConnection addRequest:attendingRequest completionHandler:^(FBRequestConnection *connection, id result, NSError *error) {
-        if (!error)
-        {
-            [self.events setObject:result[@"data"] forKey:kPTHFbEventsAttending];
-        } else
-        {
-            [self.events setObject:error forKey:kPTHFbEventsAttending];
-            NSLog(@"Error getting events/attending: %@", [error localizedDescription]);
-        }
-    }];
-    
-    [requestConnection addRequest:maybeRequest completionHandler:^(FBRequestConnection *connection, id result, NSError *error) {
-        if (!error)
-        {
-            [self.events setObject:result[@"data"] forKey:kPTHFbEventsMaybe];
-        } else
-        {
-            [self.events setObject:error forKey:kPTHFbEventsMaybe];
-            NSLog(@"Error getting events/maybe: %@", [error localizedDescription]);
-        }
-    }];
-    
-    [requestConnection addRequest:notRepliedRequest completionHandler:^(FBRequestConnection *connection, id result, NSError *error) {
-        if (!error)
-        {
-            [self.events setObject:result[@"data"] forKey:kPTHFbEventsNotReplied];
-        } else
-        {
-            [self.events setObject:error forKey:kPTHFbEventsNotReplied];
-            NSLog(@"Error getting events/not_replied: %@", [error localizedDescription]);
-        }
-    }];
-    
-    [requestConnection addRequest:declinedRequest completionHandler:^(FBRequestConnection *connection, id result, NSError *error) {
-        if (!error)
-        {
-            [self.events setObject:result[@"data"] forKey:kPTHFbEventsDeclined];
-        } else
-        {
-            [self.events setObject:error forKey:kPTHFbEventsDeclined];
-            NSLog(@"Error getting events/declined: %@", [error localizedDescription]);
-        }
-    }];
-    requestConnection.delegate = self;
-    [requestConnection start];
 }
 
 #pragma mark - FBRequestConnectionDelegate
@@ -342,9 +371,10 @@
 {
     [self.tableView reloadData];
     [self.refreshControl endRefreshing];
-    [self.activityIndicator stopAnimating];
-    self.loadingView.hidden = YES;
-    self.tableView.hidden = NO;
 }
 
+- (IBAction)didPressCancelBarButton:(id)sender
+{
+    [self dismissViewControllerAnimated:YES completion:NULL];
+}
 @end

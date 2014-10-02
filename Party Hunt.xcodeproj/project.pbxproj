@@ -8,13 +8,15 @@
 
 /* Begin PBXBuildFile section */
 		399FD1CADA97417A8C1F9A92 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 67A80E1A5F63479BA777AAAF /* libPods.a */; };
+		7F7F9F6619DC5CEC0041C03F /* PTHTopPartiesTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7F7F9F6519DC5CEC0041C03F /* PTHTopPartiesTableViewController.m */; };
+		7F7F9F6819DC737C0041C03F /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7F7F9F6719DC737C0041C03F /* CoreLocation.framework */; };
+		7F7F9F6B19DC8A5C0041C03F /* PTHNearestPartiesTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7F7F9F6A19DC8A5C0041C03F /* PTHNearestPartiesTableViewController.m */; };
+		7F7F9F6E19DCA8BF0041C03F /* PTHNewestPartiesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7F7F9F6D19DCA8BF0041C03F /* PTHNewestPartiesViewController.m */; };
+		7F7F9F7119DCE4FA0041C03F /* PTHTabBarController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7F7F9F7019DCE4FA0041C03F /* PTHTabBarController.m */; };
 		7F82693B19D246490078B005 /* PTHAddParyTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 7F82693A19D246490078B005 /* PTHAddParyTableViewCell.m */; };
 		7F82693E19D2490A0078B005 /* PTHAddPartyTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7F82693D19D2490A0078B005 /* PTHAddPartyTableViewController.m */; };
 		7F82694119D4CF1D0078B005 /* PTHConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = 7F82694019D4CF1D0078B005 /* PTHConstants.m */; };
 		7F82694519D4EB6C0078B005 /* PTHCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 7F82694419D4EB6C0078B005 /* PTHCache.m */; };
-		7F8AA8E919D8DDED007E1BA9 /* main.js in Resources */ = {isa = PBXBuildFile; fileRef = 7F8AA8E419D8DDED007E1BA9 /* main.js */; };
-		7F8AA8EA19D8DDED007E1BA9 /* global.json in Resources */ = {isa = PBXBuildFile; fileRef = 7F8AA8E619D8DDED007E1BA9 /* global.json */; };
-		7F8AA8EB19D8DDED007E1BA9 /* index.html in Resources */ = {isa = PBXBuildFile; fileRef = 7F8AA8E819D8DDED007E1BA9 /* index.html */; };
 		7FCA3C6C19D0EE7100DB8386 /* PTHUtility.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FCA3C6B19D0EE7100DB8386 /* PTHUtility.m */; };
 		7FE9254119CF488500A40405 /* PTHTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FE9254019CF488500A40405 /* PTHTableViewController.m */; };
 		7FE9254C19CF6FED00A40405 /* PTHPartyTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FE9254B19CF6FED00A40405 /* PTHPartyTableViewCell.m */; };
@@ -38,6 +40,16 @@
 
 /* Begin PBXFileReference section */
 		67A80E1A5F63479BA777AAAF /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		77764BCC5974966B2A842FE3 /* Pods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.debug.xcconfig; path = "Pods/Target Support Files/Pods/Pods.debug.xcconfig"; sourceTree = "<group>"; };
+		7F7F9F6419DC5CEC0041C03F /* PTHTopPartiesTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PTHTopPartiesTableViewController.h; path = Controllers/PTHTopPartiesTableViewController.h; sourceTree = "<group>"; };
+		7F7F9F6519DC5CEC0041C03F /* PTHTopPartiesTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PTHTopPartiesTableViewController.m; path = Controllers/PTHTopPartiesTableViewController.m; sourceTree = "<group>"; };
+		7F7F9F6719DC737C0041C03F /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
+		7F7F9F6919DC8A5C0041C03F /* PTHNearestPartiesTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PTHNearestPartiesTableViewController.h; path = Controllers/PTHNearestPartiesTableViewController.h; sourceTree = "<group>"; };
+		7F7F9F6A19DC8A5C0041C03F /* PTHNearestPartiesTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PTHNearestPartiesTableViewController.m; path = Controllers/PTHNearestPartiesTableViewController.m; sourceTree = "<group>"; };
+		7F7F9F6C19DCA8BF0041C03F /* PTHNewestPartiesViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PTHNewestPartiesViewController.h; path = Controllers/PTHNewestPartiesViewController.h; sourceTree = "<group>"; };
+		7F7F9F6D19DCA8BF0041C03F /* PTHNewestPartiesViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PTHNewestPartiesViewController.m; path = Controllers/PTHNewestPartiesViewController.m; sourceTree = "<group>"; };
+		7F7F9F6F19DCE4FA0041C03F /* PTHTabBarController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PTHTabBarController.h; path = Controllers/PTHTabBarController.h; sourceTree = "<group>"; };
+		7F7F9F7019DCE4FA0041C03F /* PTHTabBarController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PTHTabBarController.m; path = Controllers/PTHTabBarController.m; sourceTree = "<group>"; };
 		7F82693919D246490078B005 /* PTHAddParyTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PTHAddParyTableViewCell.h; path = Views/PTHAddParyTableViewCell.h; sourceTree = "<group>"; };
 		7F82693A19D246490078B005 /* PTHAddParyTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PTHAddParyTableViewCell.m; path = Views/PTHAddParyTableViewCell.m; sourceTree = "<group>"; };
 		7F82693C19D2490A0078B005 /* PTHAddPartyTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PTHAddPartyTableViewController.h; path = Controllers/PTHAddPartyTableViewController.h; sourceTree = "<group>"; };
@@ -66,7 +78,7 @@
 		7FFA6D7D19CE2E22006030EB /* Party HuntTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Party HuntTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		7FFA6D8219CE2E22006030EB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		7FFA6D8319CE2E22006030EB /* Party_HuntTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Party_HuntTests.m; sourceTree = "<group>"; };
-		8C5850346D1342F2814EE49F /* Pods.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.xcconfig; path = Pods/Pods.xcconfig; sourceTree = "<group>"; };
+		BA129E25AF26F4B19BA98476 /* Pods.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.release.xcconfig; path = "Pods/Target Support Files/Pods/Pods.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -74,6 +86,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7F7F9F6819DC737C0041C03F /* CoreLocation.framework in Frameworks */,
 				399FD1CADA97417A8C1F9A92 /* libPods.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -88,6 +101,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		1B53BB2F0851C9771AC94524 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				77764BCC5974966B2A842FE3 /* Pods.debug.xcconfig */,
+				BA129E25AF26F4B19BA98476 /* Pods.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
 		7F8AA8E119D8DDED007E1BA9 /* CloudCode */ = {
 			isa = PBXGroup;
 			children = (
@@ -133,8 +155,16 @@
 		7FE9253E19CF47DD00A40405 /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				7F7F9F6F19DCE4FA0041C03F /* PTHTabBarController.h */,
+				7F7F9F7019DCE4FA0041C03F /* PTHTabBarController.m */,
 				7FE9253F19CF488500A40405 /* PTHTableViewController.h */,
 				7FE9254019CF488500A40405 /* PTHTableViewController.m */,
+				7F7F9F6419DC5CEC0041C03F /* PTHTopPartiesTableViewController.h */,
+				7F7F9F6519DC5CEC0041C03F /* PTHTopPartiesTableViewController.m */,
+				7F7F9F6919DC8A5C0041C03F /* PTHNearestPartiesTableViewController.h */,
+				7F7F9F6A19DC8A5C0041C03F /* PTHNearestPartiesTableViewController.m */,
+				7F7F9F6C19DCA8BF0041C03F /* PTHNewestPartiesViewController.h */,
+				7F7F9F6D19DCA8BF0041C03F /* PTHNewestPartiesViewController.m */,
 				7F82693C19D2490A0078B005 /* PTHAddPartyTableViewController.h */,
 				7F82693D19D2490A0078B005 /* PTHAddPartyTableViewController.m */,
 			);
@@ -161,8 +191,8 @@
 				7FFA6D6619CE2E21006030EB /* Party Hunt */,
 				7FFA6D8019CE2E22006030EB /* Party HuntTests */,
 				7FFA6D6519CE2E21006030EB /* Products */,
-				8C5850346D1342F2814EE49F /* Pods.xcconfig */,
 				AA3262C1AB2B47B4954DF4A8 /* Frameworks */,
+				1B53BB2F0851C9771AC94524 /* Pods */,
 			);
 			sourceTree = "<group>";
 		};
@@ -223,6 +253,7 @@
 		AA3262C1AB2B47B4954DF4A8 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				7F7F9F6719DC737C0041C03F /* CoreLocation.framework */,
 				67A80E1A5F63479BA777AAAF /* libPods.a */,
 			);
 			name = Frameworks;
@@ -311,11 +342,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				7FFA6D7319CE2E22006030EB /* Main.storyboard in Resources */,
-				7F8AA8EA19D8DDED007E1BA9 /* global.json in Resources */,
 				7FFA6D7819CE2E22006030EB /* LaunchScreen.xib in Resources */,
-				7F8AA8EB19D8DDED007E1BA9 /* index.html in Resources */,
 				7FFA6D7519CE2E22006030EB /* Images.xcassets in Resources */,
-				7F8AA8E919D8DDED007E1BA9 /* main.js in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -356,7 +384,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Pods-resources.sh\"\n";
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods/Pods-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -372,7 +400,11 @@
 				7FE9254C19CF6FED00A40405 /* PTHPartyTableViewCell.m in Sources */,
 				7F82693E19D2490A0078B005 /* PTHAddPartyTableViewController.m in Sources */,
 				7FCA3C6C19D0EE7100DB8386 /* PTHUtility.m in Sources */,
+				7F7F9F6B19DC8A5C0041C03F /* PTHNearestPartiesTableViewController.m in Sources */,
 				7FFA6D6D19CE2E21006030EB /* AppDelegate.m in Sources */,
+				7F7F9F7119DCE4FA0041C03F /* PTHTabBarController.m in Sources */,
+				7F7F9F6E19DCA8BF0041C03F /* PTHNewestPartiesViewController.m in Sources */,
+				7F7F9F6619DC5CEC0041C03F /* PTHTopPartiesTableViewController.m in Sources */,
 				7FFA6D6A19CE2E21006030EB /* main.m in Sources */,
 				7F82694519D4EB6C0078B005 /* PTHCache.m in Sources */,
 			);
@@ -494,7 +526,7 @@
 		};
 		7FFA6D8819CE2E22006030EB /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 8C5850346D1342F2814EE49F /* Pods.xcconfig */;
+			baseConfigurationReference = 77764BCC5974966B2A842FE3 /* Pods.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -509,7 +541,7 @@
 		};
 		7FFA6D8919CE2E22006030EB /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 8C5850346D1342F2814EE49F /* Pods.xcconfig */;
+			baseConfigurationReference = BA129E25AF26F4B19BA98476 /* Pods.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				FRAMEWORK_SEARCH_PATHS = (

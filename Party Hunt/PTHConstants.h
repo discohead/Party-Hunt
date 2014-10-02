@@ -77,4 +77,10 @@ extern NSString *const kPTHPartyUpvoteCountKey;
 extern NSString *const kPTHUserAttributesPartyCountKey;
 extern NSString *const kPTHUserAttributesIsFriendOfCurrentUserKey;
 
+#pragma mark - Cell Identifiers
+
+extern NSString *const kPTHPartyCellIdentifier;
+
+extern double const kPTHAreaOfInterest;
+
 @end

@@ -7,33 +7,24 @@
 //
 
 #import <Parse/Parse.h>
+#import <FacebookSDK/FacebookSDK.h>
+#import <ParseFacebookUtils/PFFacebookUtils.h>
+#import <CoreLocation/CoreLocation.h>
+#import <DIDatepicker/DIDatepicker.h>
+#import "PTHPartyTableViewCell.h"
+#import "PTHUtility.h"
+#import "PTHCache.h"
+#import "PTHConstants.h"
 #import "PTHAddPartyTableViewController.h"
 
-@interface UINavigationItem(MultipleButtonsAddition)
-@property (nonatomic, strong) IBOutletCollection(UIBarButtonItem) NSArray* rightBarButtonItemsCollection;
-@property (nonatomic, strong) IBOutletCollection(UIBarButtonItem) NSArray* leftBarButtonItemsCollection;
-@end
+@class PTHPartyTableViewCell, PFObject;
 
-@implementation UINavigationItem(MultipleButtonsAddition)
+@interface PTHTableViewController : PFQueryTableViewController <PTHAddPartyTableViewControllerDelegate, PTHPartyTableViewCellDelegate, CLLocationManagerDelegate>
 
-- (void) setRightBarButtonItemsCollection:(NSArray *)rightBarButtonItemsCollection {
-    self.rightBarButtonItems = [rightBarButtonItemsCollection sortedArrayUsingDescriptors:@[[NSSortDescriptor sortDescriptorWithKey:@"tag" ascending:YES]]];
-}
+@property (strong, nonatomic) DIDatepicker *datePicker;
+@property (strong, nonatomic) CLLocationManager *locationManager;
 
-- (void) setLeftBarButtonItemsCollection:(NSArray *)leftBarButtonItemsCollection {
-    self.leftBarButtonItems = [leftBarButtonItemsCollection sortedArrayUsingDescriptors:@[[NSSortDescriptor sortDescriptorWithKey:@"tag" ascending:YES]]];
-}
-
-- (NSArray*) rightBarButtonItemsCollection {
-    return self.rightBarButtonItems;
-}
-
-- (NSArray*) leftBarButtonItemsCollection {
-    return self.leftBarButtonItems;
-}
-
-@end
-
-@interface PTHTableViewController : PFQueryTableViewController <PTHAddPartyTableViewControllerDelegate>
+- (void)configureCell:(PTHPartyTableViewCell *)cell forObject:(PFObject *)party atIndexPath:(NSIndexPath *)indexPath;
+- (void)constrainQueryToSelectedDate:(PFQuery *)query;
 
 @end

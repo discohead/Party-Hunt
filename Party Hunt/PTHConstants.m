@@ -70,10 +70,17 @@ NSString *const kPTHPartyCommentCountKey  = @"commentCount";
 NSString *const kPTHPartyUpvotersKey      = @"upvoters";
 NSString *const kPTHPartyUpvoteCountKey   = @"upvoteCount";
 
-
 #pragma mark - Cached User Attributes
 // keys
 NSString *const kPTHUserAttributesPartyCountKey                 = @"partyCount";
 NSString *const kPTHUserAttributesIsFriendOfCurrentUserKey      = @"isFriendOfCurrentUser";
+
+#pragma mark - Cell Identifiers
+
+NSString *const kPTHPartyCellIdentifier = @"PartyCell";
+
+#pragma mark - Area of interest
+
+double const kPTHAreaOfInterest = 12450.775; // The whole world for now.
 
 @end
