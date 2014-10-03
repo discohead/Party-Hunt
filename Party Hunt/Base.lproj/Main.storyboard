@@ -160,11 +160,6 @@
                     <navigationItem key="navigationItem" title="Top Parties" id="wRf-Gb-C5d"/>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="5aU-Jn-EKN" userLabel="First Responder" sceneMemberID="firstResponder"/>
-                <view contentMode="scaleToFill" id="QdF-UB-0Qc">
-                    <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                </view>
             </objects>
             <point key="canvasLocation" x="1824" y="123"/>
         </scene>
@@ -407,7 +402,11 @@
                 <tabBarController automaticallyAdjustsScrollViewInsets="NO" id="kxD-64-aoS" customClass="PTHTabBarController" sceneMemberID="viewController">
                     <toolbarItems/>
                     <navigationItem key="navigationItem" id="lat-Zf-4nb">
-                        <barButtonItem key="leftBarButtonItem" image="icon-hamburger" id="Dee-d9-VFy"/>
+                        <barButtonItem key="leftBarButtonItem" image="icon-hamburger" id="Dee-d9-VFy">
+                            <connections>
+                                <action selector="logout:" destination="kxD-64-aoS" id="sSl-Xi-y3G"/>
+                            </connections>
+                        </barButtonItem>
                         <barButtonItem key="rightBarButtonItem" image="icon-add" id="snN-7D-nB0">
                             <connections>
                                 <segue destination="OZz-Jf-6OL" kind="presentation" identifier="TabBarToAddPartySegue" id="4iF-c7-uSW"/>

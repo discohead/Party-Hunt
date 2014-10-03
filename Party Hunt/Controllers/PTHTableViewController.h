@@ -25,6 +25,7 @@
 @property (strong, nonatomic) CLLocationManager *locationManager;
 
 - (void)configureCell:(PTHPartyTableViewCell *)cell forObject:(PFObject *)party atIndexPath:(NSIndexPath *)indexPath;
-- (void)constrainQueryToSelectedDate:(PFQuery *)query;
+
+- (void)logOut;
 
 @end

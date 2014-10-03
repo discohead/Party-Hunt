@@ -22,6 +22,7 @@
 
 - (void)viewDidAppear:(BOOL)animated
 {
+    [super viewDidAppear:animated];
     self.tabBarController.navigationItem.title = @"Newest";
 }
 
@@ -70,7 +71,13 @@
 - (PFQuery *)queryForTable
 {
     PFQuery *query = [PFQuery queryWithClassName:kPTHPartyClassKey];
-    [self constrainQueryToSelectedDate:query];
+    NSDate *selectedDate = self.datePicker.selectedDate;
+    if (!selectedDate)
+    {
+        selectedDate = [NSDate date];
+    }
+    
+    [PTHUtility constrainQuery:query toDate:selectedDate];
     PFGeoPoint *currentLocation = [PFGeoPoint geoPointWithLocation:self.locationManager.location];
     [query whereKey:kPTHPartyGeoLocationKey nearGeoPoint:currentLocation withinMiles:kPTHAreaOfInterest];
     [query orderByDescending:@"createdAt"];

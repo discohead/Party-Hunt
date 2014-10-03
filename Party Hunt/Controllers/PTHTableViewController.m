@@ -18,6 +18,8 @@
 
 @implementation PTHTableViewController
 
+#pragma mark - Initializers
+
 - (id)initWithCoder:(NSCoder *)aDecoder
 {
     self = [super initWithCoder:aDecoder];
@@ -42,7 +44,7 @@
     return _locationManager;
 }
 
-
+#pragma mark - UIView methods
 
 - (void)viewDidLoad
 {
@@ -65,9 +67,9 @@
     
     self.datePicker = [[DIDatepicker alloc] initWithFrame:CGRectMake(0.0f, 0.0f, self.view.frame.size.width, 60)];
     
-    [self.datePicker addTarget:self action:@selector(updateSelectedDate) forControlEvents:UIControlEventValueChanged];
-    
     [self.datePicker fillDatesFromCurrentDate:14];
+    
+    [self.datePicker addTarget:self action:@selector(updateSelectedDate) forControlEvents:UIControlEventValueChanged];
     
     [self.datePicker selectDateAtIndex:((PTHTabBarController *)self.tabBarController).selectedDateIndex];
     
@@ -88,6 +90,8 @@
         [self.datePicker selectDateAtIndex:((PTHTabBarController *)self.tabBarController).selectedDateIndex];
     }
 }
+
+#pragma mark - UITableViewDataSource
 
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath object:(PFObject *)object
 {
@@ -170,13 +174,28 @@
     }
 }
 
+#pragma mark - Date Picker
+
+- (void)updateSelectedDate
+{
+    NSUInteger datePickerIndex = [self.datePicker.dates indexOfObject:self.datePicker.selectedDate];
+    
+    if (datePickerIndex < self.datePicker.dates.count)
+    {
+        ((PTHTabBarController *)self.tabBarController).selectedDateIndex = datePickerIndex;
+    }
+    
+    [self loadObjects];
+}
+
+
 #pragma mark - CLLocationManagerDelegate
 
 - (void)locationManager:(CLLocationManager *)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status
 {
     if (status == kCLAuthorizationStatusAuthorizedWhenInUse)
     {
-        [self loadObjects];
+        //[self loadObjects];
     }
 }
 
@@ -294,7 +313,7 @@
     [self presentViewController:logInViewController animated:YES completion:NULL];
 }
 
-- (IBAction)logOut {
+- (void)logOut {
     // clear cache
     [[PTHCache sharedCache] clear];
     
@@ -314,51 +333,7 @@
     [PFUser logOut];
     
     [self beginLogin];
-
-}
-
-- (void)updateSelectedDate
-{
-    NSUInteger datePickerIndex = [self.datePicker.dates indexOfObject:self.datePicker.selectedDate];
     
-    if (datePickerIndex < self.datePicker.dates.count)
-    {
-        ((PTHTabBarController *)self.tabBarController).selectedDateIndex = datePickerIndex;
-    }
-    
-    [self loadObjects];
-}
-
-- (void)constrainQueryToSelectedDate:(PFQuery *)query
-{
-    NSDate *selectedDate = self.datePicker.selectedDate;
-    
-    if (!selectedDate)
-    {
-        selectedDate = [NSDate date];
-    }
-    
-    NSDateComponents *dayComponentPrev = [[NSDateComponents alloc] init];
-    NSDateComponents *dayComponentNext = [[NSDateComponents alloc] init];
-    dayComponentPrev.day = -1;
-    dayComponentNext.day = +1;
-    
-    NSCalendar *calendar = [NSCalendar currentCalendar];
-    
-    NSDate *prevDate = [calendar dateByAddingComponents:dayComponentPrev toDate:selectedDate options:0];
-    NSDate *nextDate = [calendar dateByAddingComponents:dayComponentNext toDate:selectedDate options:0];
-    NSDateComponents *componentsPrev = [calendar components:NSCalendarUnitYear|NSCalendarUnitMonth|NSCalendarUnitDay fromDate:prevDate];
-    [componentsPrev setHour:23];
-    [componentsPrev setMinute:59];
-    NSDate *prevOk = [calendar dateFromComponents:componentsPrev];
-    
-    NSDateComponents *componentsNext = [calendar components:NSCalendarUnitYear|NSCalendarUnitMonth|NSCalendarUnitDay fromDate:nextDate];
-    [componentsNext setHour:0];
-    [componentsNext setMinute:0];
-    NSDate *nextOk = [calendar dateFromComponents:componentsNext];
-    
-    [query whereKey:kPTHPartyStartTimeKey greaterThanOrEqualTo:prevOk];
-    [query whereKey:kPTHPartyStartTimeKey lessThanOrEqualTo:nextOk];
 }
 
 @end

@@ -40,5 +40,9 @@
     }
 }
 
+- (IBAction)logout:(id)sender
+{
+    [(PTHTableViewController *)self.selectedViewController logOut];
+}
 
 @end

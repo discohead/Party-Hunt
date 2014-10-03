@@ -82,7 +82,13 @@
     CLLocation *location = self.locationManager.location;
     PFGeoPoint *geoPoint = [PFGeoPoint geoPointWithLocation:location];
     [query whereKey:kPTHPartyGeoLocationKey nearGeoPoint:geoPoint withinMiles:kPTHAreaOfInterest];
-    [self constrainQueryToSelectedDate:query];
+    NSDate *selectedDate = self.datePicker.selectedDate;
+    if (!selectedDate)
+    {
+        selectedDate = [NSDate date];
+    }
+    
+    [PTHUtility constrainQuery:query toDate:selectedDate];
     return query;
 }
 /*

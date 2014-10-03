@@ -185,4 +185,32 @@
     NSLog(@"eventsDictionary = %@", eventsDictionary);
     return eventsDictionary;
 }
+
+#pragma mark - Query Constraints
+
++ (void)constrainQuery:(PFQuery *)query toDate:(NSDate *)selectedDate
+{
+    NSDateComponents *dayComponentPrev = [[NSDateComponents alloc] init];
+    NSDateComponents *dayComponentNext = [[NSDateComponents alloc] init];
+    dayComponentPrev.day = -1;
+    dayComponentNext.day = +1;
+    
+    NSCalendar *calendar = [NSCalendar currentCalendar];
+    
+    NSDate *prevDate = [calendar dateByAddingComponents:dayComponentPrev toDate:selectedDate options:0];
+    NSDate *nextDate = [calendar dateByAddingComponents:dayComponentNext toDate:selectedDate options:0];
+    NSDateComponents *componentsPrev = [calendar components:NSCalendarUnitYear|NSCalendarUnitMonth|NSCalendarUnitDay fromDate:prevDate];
+    [componentsPrev setHour:23];
+    [componentsPrev setMinute:59];
+    NSDate *prevOk = [calendar dateFromComponents:componentsPrev];
+    
+    NSDateComponents *componentsNext = [calendar components:NSCalendarUnitYear|NSCalendarUnitMonth|NSCalendarUnitDay fromDate:nextDate];
+    [componentsNext setHour:0];
+    [componentsNext setMinute:0];
+    NSDate *nextOk = [calendar dateFromComponents:componentsNext];
+    
+    [query whereKey:kPTHPartyStartTimeKey greaterThanOrEqualTo:prevOk];
+    [query whereKey:kPTHPartyStartTimeKey lessThanOrEqualTo:nextOk];
+}
+
 @end
