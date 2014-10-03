@@ -18,6 +18,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
+    self.selectedDateIndex = 0;
 }
 
 #pragma mark - PTHAddPartyTableViewControllerDelegate
@@ -38,5 +39,6 @@
         addPartyVC.delegate = self;
     }
 }
+
 
 @end

@@ -19,7 +19,7 @@
 
 @class PTHPartyTableViewCell, PFObject;
 
-@interface PTHTableViewController : PFQueryTableViewController <PTHAddPartyTableViewControllerDelegate, PTHPartyTableViewCellDelegate, CLLocationManagerDelegate>
+@interface PTHTableViewController : PFQueryTableViewController <PTHPartyTableViewCellDelegate, CLLocationManagerDelegate>
 
 @property (strong, nonatomic) DIDatepicker *datePicker;
 @property (strong, nonatomic) CLLocationManager *locationManager;

@@ -23,7 +23,7 @@
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
-    self.tabBarController.navigationItem.title = @"Nearest Parties";
+    self.tabBarController.navigationItem.title = @"Nearest";
 }
 
 - (void)didReceiveMemoryWarning {

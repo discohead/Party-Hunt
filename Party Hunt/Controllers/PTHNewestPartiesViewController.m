@@ -17,7 +17,12 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
-    self.tabBarController.navigationItem.title = @"Newest Parties";
+    
+}
+
+- (void)viewDidAppear:(BOOL)animated
+{
+    self.tabBarController.navigationItem.title = @"Newest";
 }
 
 - (void)configureCell:(PTHPartyTableViewCell *)cell forObject:(PFObject *)party atIndexPath:(NSIndexPath *)indexPath

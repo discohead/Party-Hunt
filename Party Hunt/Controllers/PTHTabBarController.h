@@ -36,4 +36,6 @@
 
 @interface PTHTabBarController : UITabBarController <PTHAddPartyTableViewControllerDelegate>
 
+@property (nonatomic) NSUInteger selectedDateIndex;
+
 @end

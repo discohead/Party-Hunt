@@ -7,10 +7,11 @@
 //
 
 #import "PTHTableViewController.h"
+#import "PTHTabBarController.h"
 
 
 @interface PTHTableViewController () <PFLogInViewControllerDelegate, PFSignUpViewControllerDelegate>
-@property (strong, nonatomic) NSDate *selectedDate;
+
 @property CGRect initialFrame;
 
 @end
@@ -41,6 +42,8 @@
     return _locationManager;
 }
 
+
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
@@ -60,13 +63,13 @@
     // it will only be called as cells are about to scroll onscreen. This is a major performance optimization.
     self.tableView.estimatedRowHeight = 82.0; // set this to whatever your "average" cell height is; it doesn't need to be very accurate
     
-    self.datePicker = [[DIDatepicker alloc] initWithFrame:CGRectMake(0.0f, 0.0f, self.tableView.frame.size.width, 60)];
+    self.datePicker = [[DIDatepicker alloc] initWithFrame:CGRectMake(0.0f, 0.0f, self.view.frame.size.width, 60)];
     
     [self.datePicker addTarget:self action:@selector(updateSelectedDate) forControlEvents:UIControlEventValueChanged];
     
     [self.datePicker fillDatesFromCurrentDate:14];
     
-    [self.datePicker selectDateAtIndex:0];
+    [self.datePicker selectDateAtIndex:((PTHTabBarController *)self.tabBarController).selectedDateIndex];
     
     [self.tableView setTableHeaderView:self.datePicker];
     
@@ -77,7 +80,14 @@
     }
 }
 
-
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    if ([self.datePicker.dates indexOfObject:self.datePicker.selectedDate] != ((PTHTabBarController *)self.tabBarController).selectedDateIndex)
+    {
+        [self.datePicker selectDateAtIndex:((PTHTabBarController *)self.tabBarController).selectedDateIndex];
+    }
+}
 
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath object:(PFObject *)object
 {
@@ -307,33 +317,15 @@
 
 }
 
-- (void)showHeader:(BOOL)show animated:(BOOL)animated {
-    
-    CGRect closedFrame = CGRectMake(0, 0, self.view.frame.size.width, 0);
-    CGRect newFrame = show?self.initialFrame:closedFrame;
-    
-    if(animated){
-        // The UIView animation block handles the animation of our header view
-        [UIView beginAnimations:nil context:nil];
-        [UIView setAnimationDuration:0.3];
-        [UIView setAnimationCurve:UIViewAnimationCurveEaseInOut];
-        
-        // beginUpdates and endUpdates trigger the animation of our cells
-        [self.tableView beginUpdates];
-    }
-    
-    self.datePicker.frame = newFrame;
-    [self.tableView setTableHeaderView:self.datePicker];
-    
-    if(animated){
-        [self.tableView endUpdates];
-        [UIView commitAnimations];
-    }
-}
-
 - (void)updateSelectedDate
 {
-    self.selectedDate = self.datePicker.selectedDate;
+    NSUInteger datePickerIndex = [self.datePicker.dates indexOfObject:self.datePicker.selectedDate];
+    
+    if (datePickerIndex < self.datePicker.dates.count)
+    {
+        ((PTHTabBarController *)self.tabBarController).selectedDateIndex = datePickerIndex;
+    }
+    
     [self loadObjects];
 }
 
@@ -359,13 +351,11 @@
     [componentsPrev setHour:23];
     [componentsPrev setMinute:59];
     NSDate *prevOk = [calendar dateFromComponents:componentsPrev];
-    NSLog(@"prevOk = %@", prevOk);
     
     NSDateComponents *componentsNext = [calendar components:NSCalendarUnitYear|NSCalendarUnitMonth|NSCalendarUnitDay fromDate:nextDate];
     [componentsNext setHour:0];
     [componentsNext setMinute:0];
     NSDate *nextOk = [calendar dateFromComponents:componentsNext];
-    NSLog(@"nextOk = %@", nextOk);
     
     [query whereKey:kPTHPartyStartTimeKey greaterThanOrEqualTo:prevOk];
     [query whereKey:kPTHPartyStartTimeKey lessThanOrEqualTo:nextOk];
