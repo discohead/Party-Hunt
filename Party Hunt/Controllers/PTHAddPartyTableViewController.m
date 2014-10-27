@@ -15,11 +15,24 @@
 #import "PTHUtility.h"
 
 @interface PTHAddPartyTableViewController () <UIAlertViewDelegate, FBRequestConnectionDelegate>
+
+
+@property (strong, nonatomic) NSDateFormatter *dateFormatter;
 - (IBAction)didPressCancelBarButton:(id)sender;
 
 @end
 
 @implementation PTHAddPartyTableViewController
+
+- (NSDateFormatter *)dateFormatter
+{
+    if (!_dateFormatter)
+    {
+        _dateFormatter = [[NSDateFormatter alloc] init];
+        [_dateFormatter setDateFormat:@"yyyy-MM-dd'T'HH:mm:ssZ"];
+    }
+    return _dateFormatter;
+}
 
 - (id)initWithCoder:(NSCoder *)aDecoder
 {
@@ -34,6 +47,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
     [self.refreshControl addTarget:self action:@selector(getFbEventsForCurrentUser) forControlEvents:UIControlEventValueChanged];
     
     // Self-sizing table view cells in iOS 8 require that the rowHeight property of the table view be set to the constant UITableViewAutomaticDimension
@@ -43,7 +57,7 @@
     // Setting the estimated row height prevents the table view from calling tableView:heightForRowAtIndexPath: for every row in the table on first load;
     // it will only be called as cells are about to scroll onscreen. This is a major performance optimization.
     self.tableView.estimatedRowHeight = 82.0; // set this to whatever your "average" cell height is; it doesn't need to be very accurate
-
+    
 }
 
 - (void)didReceiveMemoryWarning {
@@ -214,19 +228,17 @@
     [mutableFbEvent setObject:fbEvent[@"id"] forKey:kPTHPartyFbEventIdKey];
     [mutableFbEvent removeObjectForKey:@"id"];
     
-    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-    [dateFormatter setDateFormat:@"yyyy-MM-dd'T'HH:mm:ssZ"];
     
     if ([fbEvent objectForKey:kPTHPartyStartTimeKey])
     {
         NSString *startTimeString = [fbEvent objectForKey:kPTHPartyStartTimeKey];
-        NSDate *startDate = [dateFormatter dateFromString:startTimeString];
+        NSDate *startDate = [self.dateFormatter dateFromString:startTimeString];
         [mutableFbEvent setValue:startDate forKey:kPTHPartyStartTimeKey];
     }
     if ([fbEvent objectForKey:kPTHPartyEndTimeKey])
     {
         NSString *endTimeString = [fbEvent objectForKey:kPTHPartyEndTimeKey];
-        NSDate *endDate = [dateFormatter dateFromString:endTimeString];
+        NSDate *endDate = [self.dateFormatter dateFromString:endTimeString];
         [mutableFbEvent setValue:endDate forKey:kPTHPartyEndTimeKey];
     }
     
@@ -293,18 +305,19 @@
             }
         }
         
-        FBRequest *createdRequest = [FBRequest requestForGraphPath:@"me/events/created?fields=name,description,start_time,end_time,location,venue,privacy"];
-        FBRequest *attendingRequest = [FBRequest requestForGraphPath:@"me/events/attending?fields=name,description,start_time,end_time,location,venue,privacy"];
-        FBRequest *maybeRequest = [FBRequest requestForGraphPath:@"me/events/maybe?fields=name,description,start_time,end_time,location,venue,privacy"];
-        FBRequest *notRepliedRequest = [FBRequest requestForGraphPath:@"me/events/not_replied?fields=name,description,start_time,end_time,location,venue,privacy"];
-        FBRequest *declinedRequest = [FBRequest requestForGraphPath:@"me/events/declined?fields=name,description,start_time,end_time,location,venue,privacy"];
+        FBRequest *createdRequest = [FBRequest requestForGraphPath:@"me/events/created?fields=id,cover,description,end_time,is_date_only,location,name,owner,parent_group,privacy,start_time,ticket_uri,timezone,updated_time,venue"];
+        FBRequest *attendingRequest = [FBRequest requestForGraphPath:@"me/events/attending?fields=id,cover,description,end_time,is_date_only,location,name,owner,parent_group,privacy,start_time,ticket_uri,timezone,updated_time,venue"];
+        FBRequest *maybeRequest = [FBRequest requestForGraphPath:@"me/events/maybe?fields=id,cover,description,end_time,is_date_only,location,name,owner,parent_group,privacy,start_time,ticket_uri,timezone,updated_time,venue"];
+        FBRequest *notRepliedRequest = [FBRequest requestForGraphPath:@"me/events/not_replied?fields=id,cover,description,end_time,is_date_only,location,name,owner,parent_group,privacy,start_time,ticket_uri,timezone,updated_time,venue"];
+        FBRequest *declinedRequest = [FBRequest requestForGraphPath:@"me/events/declined?fields=id,cover,description,end_time,is_date_only,location,name,owner,parent_group,privacy,start_time,ticket_uri,timezone,updated_time,venue"];
         
         FBRequestConnection *requestConnection = [[FBRequestConnection alloc] init];
         
         [requestConnection addRequest:createdRequest completionHandler:^(FBRequestConnection *connection, id result, NSError *error) {
             if (!error)
             {
-                [self.events setObject:result[@"data"] forKey:kPTHFbEventsCreated];
+                NSArray *filteredEventArray = [self filterEvents:result[@"data"]];
+                [self.events setObject:filteredEventArray forKey:kPTHFbEventsCreated];
             } else
             {
                 [self.events setObject:error forKey:kPTHFbEventsCreated];
@@ -315,7 +328,8 @@
         [requestConnection addRequest:attendingRequest completionHandler:^(FBRequestConnection *connection, id result, NSError *error) {
             if (!error)
             {
-                [self.events setObject:result[@"data"] forKey:kPTHFbEventsAttending];
+                NSArray *filteredEventArray = [self filterEvents:result[@"data"]];
+                [self.events setObject:filteredEventArray forKey:kPTHFbEventsAttending];
             } else
             {
                 [self.events setObject:error forKey:kPTHFbEventsAttending];
@@ -326,7 +340,8 @@
         [requestConnection addRequest:maybeRequest completionHandler:^(FBRequestConnection *connection, id result, NSError *error) {
             if (!error)
             {
-                [self.events setObject:result[@"data"] forKey:kPTHFbEventsMaybe];
+                NSArray *filteredEventArray = [self filterEvents:result[@"data"]];
+                [self.events setObject:filteredEventArray forKey:kPTHFbEventsMaybe];
             } else
             {
                 [self.events setObject:error forKey:kPTHFbEventsMaybe];
@@ -337,7 +352,8 @@
         [requestConnection addRequest:notRepliedRequest completionHandler:^(FBRequestConnection *connection, id result, NSError *error) {
             if (!error)
             {
-                [self.events setObject:result[@"data"] forKey:kPTHFbEventsNotReplied];
+                NSArray *filteredEventArray = [self filterEvents:result[@"data"]];
+                [self.events setObject:filteredEventArray forKey:kPTHFbEventsNotReplied];
             } else
             {
                 [self.events setObject:error forKey:kPTHFbEventsNotReplied];
@@ -348,7 +364,8 @@
         [requestConnection addRequest:declinedRequest completionHandler:^(FBRequestConnection *connection, id result, NSError *error) {
             if (!error)
             {
-                [self.events setObject:result[@"data"] forKey:kPTHFbEventsDeclined];
+                NSArray *filteredEventArray = [self filterEvents:result[@"data"]];
+                [self.events setObject:filteredEventArray forKey:kPTHFbEventsDeclined];
             } else
             {
                 [self.events setObject:error forKey:kPTHFbEventsDeclined];
@@ -363,6 +380,22 @@
         [alert show];
     }
     
+}
+
+#pragma mark - Utility Methods
+
+- (NSArray *)filterEvents:(NSArray *)events
+{
+    NSMutableArray *eventArray = [NSMutableArray array];
+    
+    for (NSDictionary *event in events)
+    {
+        if ([event[@"privacy"] isEqualToString:@"OPEN"] && ([[self.dateFormatter dateFromString:event[@"start_time"]] compare:[NSDate date]] != NSOrderedAscending))
+        {
+            [eventArray addObject:event];
+        }
+    }
+    return eventArray;
 }
 
 #pragma mark - FBRequestConnectionDelegate

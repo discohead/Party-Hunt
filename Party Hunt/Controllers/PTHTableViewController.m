@@ -8,6 +8,7 @@
 
 #import "PTHTableViewController.h"
 #import "PTHTabBarController.h"
+#import "PTHPartyDetailTableViewController.h"
 
 
 @interface PTHTableViewController () <PFLogInViewControllerDelegate, PFSignUpViewControllerDelegate>
@@ -67,7 +68,7 @@
     
     self.datePicker = [[DIDatepicker alloc] initWithFrame:CGRectMake(0.0f, 0.0f, self.view.frame.size.width, 60)];
     
-    [self.datePicker fillDatesFromCurrentDate:14];
+    [self.datePicker fillDatesFromCurrentDate:30];
     
     [self.datePicker addTarget:self action:@selector(updateSelectedDate) forControlEvents:UIControlEventValueChanged];
     
@@ -111,10 +112,24 @@
     return cell;
 }
 
+-(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    [self performSegueWithIdentifier:@"ToDetailSegue" sender:self.objects[indexPath.row]];
+}
+
 - (void)configureCell:(PTHPartyTableViewCell *)cell forObject:(PFObject *)party atIndexPath:(NSIndexPath *)indexPath
 {
     // Sub-classes must override this method
 
+}
+
+-(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
+{
+    if ([segue.identifier isEqualToString:@"ToDetailSegue"])
+    {
+        PTHPartyDetailTableViewController *detailVC = (PTHPartyDetailTableViewController *)segue.destinationViewController;
+        detailVC.party = sender;
+    }
 }
 
 #pragma mark - PTHPartyTableViewCellDelegate

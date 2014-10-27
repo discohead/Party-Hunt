@@ -17,6 +17,8 @@
 		7F82693E19D2490A0078B005 /* PTHAddPartyTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7F82693D19D2490A0078B005 /* PTHAddPartyTableViewController.m */; };
 		7F82694119D4CF1D0078B005 /* PTHConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = 7F82694019D4CF1D0078B005 /* PTHConstants.m */; };
 		7F82694519D4EB6C0078B005 /* PTHCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 7F82694419D4EB6C0078B005 /* PTHCache.m */; };
+		7F88CCF419EB0BA300B88757 /* PTHPartyDetailTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 7F88CCF319EB0BA300B88757 /* PTHPartyDetailTableViewCell.m */; };
+		7F88CCF719EB0C9200B88757 /* PTHPartyDetailTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7F88CCF619EB0C9200B88757 /* PTHPartyDetailTableViewController.m */; };
 		7FCA3C6C19D0EE7100DB8386 /* PTHUtility.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FCA3C6B19D0EE7100DB8386 /* PTHUtility.m */; };
 		7FE9254119CF488500A40405 /* PTHTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FE9254019CF488500A40405 /* PTHTableViewController.m */; };
 		7FE9254C19CF6FED00A40405 /* PTHPartyTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FE9254B19CF6FED00A40405 /* PTHPartyTableViewCell.m */; };
@@ -58,6 +60,10 @@
 		7F82694019D4CF1D0078B005 /* PTHConstants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PTHConstants.m; sourceTree = "<group>"; };
 		7F82694319D4EB6C0078B005 /* PTHCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PTHCache.h; sourceTree = "<group>"; };
 		7F82694419D4EB6C0078B005 /* PTHCache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PTHCache.m; sourceTree = "<group>"; };
+		7F88CCF219EB0BA300B88757 /* PTHPartyDetailTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PTHPartyDetailTableViewCell.h; path = Views/PTHPartyDetailTableViewCell.h; sourceTree = "<group>"; };
+		7F88CCF319EB0BA300B88757 /* PTHPartyDetailTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PTHPartyDetailTableViewCell.m; path = Views/PTHPartyDetailTableViewCell.m; sourceTree = "<group>"; };
+		7F88CCF519EB0C9200B88757 /* PTHPartyDetailTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PTHPartyDetailTableViewController.h; path = Controllers/PTHPartyDetailTableViewController.h; sourceTree = "<group>"; };
+		7F88CCF619EB0C9200B88757 /* PTHPartyDetailTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PTHPartyDetailTableViewController.m; path = Controllers/PTHPartyDetailTableViewController.m; sourceTree = "<group>"; };
 		7F8AA8E419D8DDED007E1BA9 /* main.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = main.js; sourceTree = "<group>"; };
 		7F8AA8E619D8DDED007E1BA9 /* global.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = global.json; sourceTree = "<group>"; };
 		7F8AA8E819D8DDED007E1BA9 /* index.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = index.html; sourceTree = "<group>"; };
@@ -167,6 +173,8 @@
 				7F7F9F6D19DCA8BF0041C03F /* PTHNewestPartiesViewController.m */,
 				7F82693C19D2490A0078B005 /* PTHAddPartyTableViewController.h */,
 				7F82693D19D2490A0078B005 /* PTHAddPartyTableViewController.m */,
+				7F88CCF519EB0C9200B88757 /* PTHPartyDetailTableViewController.h */,
+				7F88CCF619EB0C9200B88757 /* PTHPartyDetailTableViewController.m */,
 			);
 			name = Controllers;
 			sourceTree = "<group>";
@@ -180,6 +188,8 @@
 				7FE9254B19CF6FED00A40405 /* PTHPartyTableViewCell.m */,
 				7F82693919D246490078B005 /* PTHAddParyTableViewCell.h */,
 				7F82693A19D246490078B005 /* PTHAddParyTableViewCell.m */,
+				7F88CCF219EB0BA300B88757 /* PTHPartyDetailTableViewCell.h */,
+				7F88CCF319EB0BA300B88757 /* PTHPartyDetailTableViewCell.m */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -394,6 +404,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7F88CCF419EB0BA300B88757 /* PTHPartyDetailTableViewCell.m in Sources */,
 				7FE9254119CF488500A40405 /* PTHTableViewController.m in Sources */,
 				7F82693B19D246490078B005 /* PTHAddParyTableViewCell.m in Sources */,
 				7F82694119D4CF1D0078B005 /* PTHConstants.m in Sources */,
@@ -405,6 +416,7 @@
 				7F7F9F7119DCE4FA0041C03F /* PTHTabBarController.m in Sources */,
 				7F7F9F6E19DCA8BF0041C03F /* PTHNewestPartiesViewController.m in Sources */,
 				7F7F9F6619DC5CEC0041C03F /* PTHTopPartiesTableViewController.m in Sources */,
+				7F88CCF719EB0C9200B88757 /* PTHPartyDetailTableViewController.m in Sources */,
 				7FFA6D6A19CE2E21006030EB /* main.m in Sources */,
 				7F82694519D4EB6C0078B005 /* PTHCache.m in Sources */,
 			);

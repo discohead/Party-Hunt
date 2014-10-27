@@ -80,6 +80,7 @@ extern NSString *const kPTHUserAttributesIsFriendOfCurrentUserKey;
 #pragma mark - Cell Identifiers
 
 extern NSString *const kPTHPartyCellIdentifier;
+extern NSString *const kPTHDetailCellIdentifier;
 
 extern double const kPTHAreaOfInterest;
 

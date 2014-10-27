@@ -78,6 +78,7 @@ NSString *const kPTHUserAttributesIsFriendOfCurrentUserKey      = @"isFriendOfCu
 #pragma mark - Cell Identifiers
 
 NSString *const kPTHPartyCellIdentifier = @"PartyCell";
+NSString *const kPTHDetailCellIdentifier = @"DetailCell";
 
 #pragma mark - Area of interest
 
