@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>AA8BEEEC-A458-443C-9DFA-51BA9504A703</string>
+	<key>IDESourceControlProjectName</key>
+	<string>Party Hunt</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>23934891EC090D377D43C9C7551134C1B485FB7E</key>
+		<string>https://github.com/discohead/Party-Hunt.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>Party Hunt.xcworkspace</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>23934891EC090D377D43C9C7551134C1B485FB7E</key>
+		<string>..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>https://github.com/discohead/Party-Hunt.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>111</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>23934891EC090D377D43C9C7551134C1B485FB7E</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>23934891EC090D377D43C9C7551134C1B485FB7E</string>
+			<key>IDESourceControlWCCName</key>
+			<string>Party%20Hunt</string>
+		</dict>
+	</array>
+</dict>
+</plist>
