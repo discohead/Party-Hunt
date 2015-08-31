@@ -70,7 +70,7 @@ extern NSString *const kPTHPartyPrivacyKey;
 extern NSString *const kPTHPartyCommentCountKey;
 extern NSString *const kPTHPartyUpvotersKey;
 extern NSString *const kPTHPartyUpvoteCountKey;
-
+extern NSString *const kPTHPartyTicketLinkKey;
 
 #pragma mark - Cached User Attributes
 // keys
@@ -81,6 +81,10 @@ extern NSString *const kPTHUserAttributesIsFriendOfCurrentUserKey;
 
 extern NSString *const kPTHPartyCellIdentifier;
 extern NSString *const kPTHDetailCellIdentifier;
+extern NSString *const kPTHDescriptionCellIdentifier;
+extern NSString *const kPTHPhotoCellIdentifier;
+extern NSString *const kPTHAddressCellIdentifier;
+extern NSString *const kPTHCommentCellIdentifier;
 
 extern double const kPTHAreaOfInterest;
 

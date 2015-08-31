@@ -30,6 +30,7 @@ IB_DESIGNABLE
 - (void)shouldEnableUpvoteButton:(BOOL)enabled;
 - (void)setUpvoteStatus:(BOOL)upvoted;
 
+
 @end
 
 @protocol PTHPartyTableViewCellDelegate <NSObject>

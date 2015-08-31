@@ -13,13 +13,17 @@
 		7F7F9F6B19DC8A5C0041C03F /* PTHNearestPartiesTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7F7F9F6A19DC8A5C0041C03F /* PTHNearestPartiesTableViewController.m */; };
 		7F7F9F6E19DCA8BF0041C03F /* PTHNewestPartiesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7F7F9F6D19DCA8BF0041C03F /* PTHNewestPartiesViewController.m */; };
 		7F7F9F7119DCE4FA0041C03F /* PTHTabBarController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7F7F9F7019DCE4FA0041C03F /* PTHTabBarController.m */; };
-		7F82693B19D246490078B005 /* PTHAddParyTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 7F82693A19D246490078B005 /* PTHAddParyTableViewCell.m */; };
 		7F82693E19D2490A0078B005 /* PTHAddPartyTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7F82693D19D2490A0078B005 /* PTHAddPartyTableViewController.m */; };
 		7F82694119D4CF1D0078B005 /* PTHConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = 7F82694019D4CF1D0078B005 /* PTHConstants.m */; };
 		7F82694519D4EB6C0078B005 /* PTHCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 7F82694419D4EB6C0078B005 /* PTHCache.m */; };
-		7F88CCF419EB0BA300B88757 /* PTHPartyDetailTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 7F88CCF319EB0BA300B88757 /* PTHPartyDetailTableViewCell.m */; };
 		7F88CCF719EB0C9200B88757 /* PTHPartyDetailTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7F88CCF619EB0C9200B88757 /* PTHPartyDetailTableViewController.m */; };
+		7FB724BD1A51EF4500698800 /* PTHCommentsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FB724BC1A51EF4500698800 /* PTHCommentsTableViewController.m */; };
+		7FB724C01A51EF8800698800 /* PTHCommentTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FB724BF1A51EF8800698800 /* PTHCommentTableViewCell.m */; };
 		7FCA3C6C19D0EE7100DB8386 /* PTHUtility.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FCA3C6B19D0EE7100DB8386 /* PTHUtility.m */; };
+		7FE8A51F1A278FD9001196B9 /* PTHPartyPhotoTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FE8A51E1A278FD9001196B9 /* PTHPartyPhotoTableViewCell.m */; };
+		7FE8A5221A279970001196B9 /* PTHAddressTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FE8A5211A279970001196B9 /* PTHAddressTableViewCell.m */; };
+		7FE8A5281A27A68E001196B9 /* ContentHeightTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FE8A5271A27A68E001196B9 /* ContentHeightTextView.m */; };
+		7FE8A52B1A27BA01001196B9 /* PTHPartyDescriptionTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FE8A52A1A27BA01001196B9 /* PTHPartyDescriptionTableViewCell.m */; };
 		7FE9254119CF488500A40405 /* PTHTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FE9254019CF488500A40405 /* PTHTableViewController.m */; };
 		7FE9254C19CF6FED00A40405 /* PTHPartyTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FE9254B19CF6FED00A40405 /* PTHPartyTableViewCell.m */; };
 		7FFA6D6A19CE2E21006030EB /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FFA6D6919CE2E21006030EB /* main.m */; };
@@ -52,23 +56,31 @@
 		7F7F9F6D19DCA8BF0041C03F /* PTHNewestPartiesViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PTHNewestPartiesViewController.m; path = Controllers/PTHNewestPartiesViewController.m; sourceTree = "<group>"; };
 		7F7F9F6F19DCE4FA0041C03F /* PTHTabBarController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PTHTabBarController.h; path = Controllers/PTHTabBarController.h; sourceTree = "<group>"; };
 		7F7F9F7019DCE4FA0041C03F /* PTHTabBarController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PTHTabBarController.m; path = Controllers/PTHTabBarController.m; sourceTree = "<group>"; };
-		7F82693919D246490078B005 /* PTHAddParyTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PTHAddParyTableViewCell.h; path = Views/PTHAddParyTableViewCell.h; sourceTree = "<group>"; };
-		7F82693A19D246490078B005 /* PTHAddParyTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PTHAddParyTableViewCell.m; path = Views/PTHAddParyTableViewCell.m; sourceTree = "<group>"; };
 		7F82693C19D2490A0078B005 /* PTHAddPartyTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PTHAddPartyTableViewController.h; path = Controllers/PTHAddPartyTableViewController.h; sourceTree = "<group>"; };
 		7F82693D19D2490A0078B005 /* PTHAddPartyTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PTHAddPartyTableViewController.m; path = Controllers/PTHAddPartyTableViewController.m; sourceTree = "<group>"; };
 		7F82693F19D4CF1D0078B005 /* PTHConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PTHConstants.h; sourceTree = "<group>"; };
 		7F82694019D4CF1D0078B005 /* PTHConstants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PTHConstants.m; sourceTree = "<group>"; };
 		7F82694319D4EB6C0078B005 /* PTHCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PTHCache.h; sourceTree = "<group>"; };
 		7F82694419D4EB6C0078B005 /* PTHCache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PTHCache.m; sourceTree = "<group>"; };
-		7F88CCF219EB0BA300B88757 /* PTHPartyDetailTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PTHPartyDetailTableViewCell.h; path = Views/PTHPartyDetailTableViewCell.h; sourceTree = "<group>"; };
-		7F88CCF319EB0BA300B88757 /* PTHPartyDetailTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PTHPartyDetailTableViewCell.m; path = Views/PTHPartyDetailTableViewCell.m; sourceTree = "<group>"; };
 		7F88CCF519EB0C9200B88757 /* PTHPartyDetailTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PTHPartyDetailTableViewController.h; path = Controllers/PTHPartyDetailTableViewController.h; sourceTree = "<group>"; };
 		7F88CCF619EB0C9200B88757 /* PTHPartyDetailTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PTHPartyDetailTableViewController.m; path = Controllers/PTHPartyDetailTableViewController.m; sourceTree = "<group>"; };
 		7F8AA8E419D8DDED007E1BA9 /* main.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = main.js; sourceTree = "<group>"; };
 		7F8AA8E619D8DDED007E1BA9 /* global.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = global.json; sourceTree = "<group>"; };
 		7F8AA8E819D8DDED007E1BA9 /* index.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = index.html; sourceTree = "<group>"; };
+		7FB724BB1A51EF4500698800 /* PTHCommentsTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PTHCommentsTableViewController.h; path = Controllers/PTHCommentsTableViewController.h; sourceTree = "<group>"; };
+		7FB724BC1A51EF4500698800 /* PTHCommentsTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PTHCommentsTableViewController.m; path = Controllers/PTHCommentsTableViewController.m; sourceTree = "<group>"; };
+		7FB724BE1A51EF8800698800 /* PTHCommentTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PTHCommentTableViewCell.h; path = Views/PTHCommentTableViewCell.h; sourceTree = "<group>"; };
+		7FB724BF1A51EF8800698800 /* PTHCommentTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PTHCommentTableViewCell.m; path = Views/PTHCommentTableViewCell.m; sourceTree = "<group>"; };
 		7FCA3C6A19D0EE7100DB8386 /* PTHUtility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PTHUtility.h; sourceTree = "<group>"; };
 		7FCA3C6B19D0EE7100DB8386 /* PTHUtility.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PTHUtility.m; sourceTree = "<group>"; };
+		7FE8A51D1A278FD9001196B9 /* PTHPartyPhotoTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PTHPartyPhotoTableViewCell.h; path = Views/PTHPartyPhotoTableViewCell.h; sourceTree = "<group>"; };
+		7FE8A51E1A278FD9001196B9 /* PTHPartyPhotoTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PTHPartyPhotoTableViewCell.m; path = Views/PTHPartyPhotoTableViewCell.m; sourceTree = "<group>"; };
+		7FE8A5201A279970001196B9 /* PTHAddressTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PTHAddressTableViewCell.h; path = Views/PTHAddressTableViewCell.h; sourceTree = "<group>"; };
+		7FE8A5211A279970001196B9 /* PTHAddressTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PTHAddressTableViewCell.m; path = Views/PTHAddressTableViewCell.m; sourceTree = "<group>"; };
+		7FE8A5261A27A68E001196B9 /* ContentHeightTextView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ContentHeightTextView.h; path = Views/ContentHeightTextView.h; sourceTree = "<group>"; };
+		7FE8A5271A27A68E001196B9 /* ContentHeightTextView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ContentHeightTextView.m; path = Views/ContentHeightTextView.m; sourceTree = "<group>"; };
+		7FE8A5291A27BA01001196B9 /* PTHPartyDescriptionTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PTHPartyDescriptionTableViewCell.h; path = Views/PTHPartyDescriptionTableViewCell.h; sourceTree = "<group>"; };
+		7FE8A52A1A27BA01001196B9 /* PTHPartyDescriptionTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PTHPartyDescriptionTableViewCell.m; path = Views/PTHPartyDescriptionTableViewCell.m; sourceTree = "<group>"; };
 		7FE9253F19CF488500A40405 /* PTHTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PTHTableViewController.h; path = Controllers/PTHTableViewController.h; sourceTree = "<group>"; };
 		7FE9254019CF488500A40405 /* PTHTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PTHTableViewController.m; path = Controllers/PTHTableViewController.m; sourceTree = "<group>"; };
 		7FE9254A19CF6FED00A40405 /* PTHPartyTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PTHPartyTableViewCell.h; path = Views/PTHPartyTableViewCell.h; sourceTree = "<group>"; };
@@ -175,6 +187,8 @@
 				7F82693D19D2490A0078B005 /* PTHAddPartyTableViewController.m */,
 				7F88CCF519EB0C9200B88757 /* PTHPartyDetailTableViewController.h */,
 				7F88CCF619EB0C9200B88757 /* PTHPartyDetailTableViewController.m */,
+				7FB724BB1A51EF4500698800 /* PTHCommentsTableViewController.h */,
+				7FB724BC1A51EF4500698800 /* PTHCommentsTableViewController.m */,
 			);
 			name = Controllers;
 			sourceTree = "<group>";
@@ -184,12 +198,18 @@
 			children = (
 				7FFA6D7619CE2E22006030EB /* LaunchScreen.xib */,
 				7FFA6D7119CE2E22006030EB /* Main.storyboard */,
+				7FE8A5291A27BA01001196B9 /* PTHPartyDescriptionTableViewCell.h */,
+				7FE8A52A1A27BA01001196B9 /* PTHPartyDescriptionTableViewCell.m */,
+				7FB724BE1A51EF8800698800 /* PTHCommentTableViewCell.h */,
+				7FB724BF1A51EF8800698800 /* PTHCommentTableViewCell.m */,
+				7FE8A5261A27A68E001196B9 /* ContentHeightTextView.h */,
+				7FE8A5271A27A68E001196B9 /* ContentHeightTextView.m */,
+				7FE8A5201A279970001196B9 /* PTHAddressTableViewCell.h */,
+				7FE8A5211A279970001196B9 /* PTHAddressTableViewCell.m */,
+				7FE8A51D1A278FD9001196B9 /* PTHPartyPhotoTableViewCell.h */,
+				7FE8A51E1A278FD9001196B9 /* PTHPartyPhotoTableViewCell.m */,
 				7FE9254A19CF6FED00A40405 /* PTHPartyTableViewCell.h */,
 				7FE9254B19CF6FED00A40405 /* PTHPartyTableViewCell.m */,
-				7F82693919D246490078B005 /* PTHAddParyTableViewCell.h */,
-				7F82693A19D246490078B005 /* PTHAddParyTableViewCell.m */,
-				7F88CCF219EB0BA300B88757 /* PTHPartyDetailTableViewCell.h */,
-				7F88CCF319EB0BA300B88757 /* PTHPartyDetailTableViewCell.m */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -404,17 +424,21 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				7F88CCF419EB0BA300B88757 /* PTHPartyDetailTableViewCell.m in Sources */,
+				7FE8A51F1A278FD9001196B9 /* PTHPartyPhotoTableViewCell.m in Sources */,
 				7FE9254119CF488500A40405 /* PTHTableViewController.m in Sources */,
-				7F82693B19D246490078B005 /* PTHAddParyTableViewCell.m in Sources */,
 				7F82694119D4CF1D0078B005 /* PTHConstants.m in Sources */,
 				7FE9254C19CF6FED00A40405 /* PTHPartyTableViewCell.m in Sources */,
+				7FB724BD1A51EF4500698800 /* PTHCommentsTableViewController.m in Sources */,
 				7F82693E19D2490A0078B005 /* PTHAddPartyTableViewController.m in Sources */,
+				7FE8A52B1A27BA01001196B9 /* PTHPartyDescriptionTableViewCell.m in Sources */,
 				7FCA3C6C19D0EE7100DB8386 /* PTHUtility.m in Sources */,
 				7F7F9F6B19DC8A5C0041C03F /* PTHNearestPartiesTableViewController.m in Sources */,
 				7FFA6D6D19CE2E21006030EB /* AppDelegate.m in Sources */,
+				7FE8A5281A27A68E001196B9 /* ContentHeightTextView.m in Sources */,
+				7FE8A5221A279970001196B9 /* PTHAddressTableViewCell.m in Sources */,
 				7F7F9F7119DCE4FA0041C03F /* PTHTabBarController.m in Sources */,
 				7F7F9F6E19DCA8BF0041C03F /* PTHNewestPartiesViewController.m in Sources */,
+				7FB724C01A51EF8800698800 /* PTHCommentTableViewCell.m in Sources */,
 				7F7F9F6619DC5CEC0041C03F /* PTHTopPartiesTableViewController.m in Sources */,
 				7F88CCF719EB0C9200B88757 /* PTHPartyDetailTableViewController.m in Sources */,
 				7FFA6D6A19CE2E21006030EB /* main.m in Sources */,

@@ -249,8 +249,8 @@
     [party setObject:@(0) forKey:kPTHPartyUpvoteCountKey];
     [party addUniqueObject:[PFUser currentUser] forKey:kPTHPartyUpvotersKey];
     
-    NSNumber *latitude = [fbEvent valueForKeyPath:@"venue.latitude"];
-    NSNumber *longitude = [fbEvent valueForKeyPath:@"venue.longitude"];
+    NSNumber *latitude = fbEvent[@"venue"][@"latitude"];
+    NSNumber *longitude = fbEvent[@"venue"][@"longitude"];;
     
     if (latitude && longitude)
     {

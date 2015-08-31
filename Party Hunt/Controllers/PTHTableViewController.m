@@ -170,7 +170,7 @@
                 actualTableViewCell.upvoteCountLabel.text = originalUpvoteCount;
             } else
             {
-                // [party addUniqueObject:[PFUser currentUser] forKey:@"upvoters"];
+                [party addUniqueObject:[PFUser currentUser] forKey:@"upvoters"];
             }
         }];
     } else {
@@ -183,7 +183,7 @@
                 actualTableViewCell.upvoteCountLabel.text = originalUpvoteCount;
             } else
             {
-                // [party removeObject:[PFUser currentUser] forKey:@"upvoters"];
+                [party removeObject:[PFUser currentUser] forKey:@"upvoters"];
             }
         }];
     }

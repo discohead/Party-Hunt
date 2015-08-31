@@ -38,7 +38,7 @@
     BOOL isUpvotedByCurrentUser = [PTHUtility userArray:upvoters containsUser:[PFUser currentUser]];
     [cell setUpvoteStatus:isUpvotedByCurrentUser];
     
-    cell.nameLabel.text = [party valueForKey:kPTHPartyNameKey];
+    cell.nameLabel.text = [party objectForKey:kPTHPartyNameKey];
     //cell.bylineLabel.text = [object objectForKey:@"description"];
     
     PFGeoPoint *geoPoint = [party objectForKey:kPTHPartyGeoLocationKey];
@@ -46,17 +46,17 @@
     CLLocationDistance distance = [self.locationManager.location distanceFromLocation:partyLocation];
     double distanceInMiles = distance * 0.00062137;
     
-    cell.upvoteCountLabel.text = [NSString stringWithFormat:@"%@",[party valueForKey:kPTHPartyUpvoteCountKey]];
+    cell.upvoteCountLabel.text = [NSString stringWithFormat:@"%@",[party objectForKey:kPTHPartyUpvoteCountKey]];
     cell.commentImageView.image = nil;
     cell.commentCountLabel.text = [NSString stringWithFormat:@"%.1fmi",distanceInMiles];
     
     NSDateFormatter *hourFormatter = [[NSDateFormatter alloc] init];
     [hourFormatter setDateFormat:@"ha"];
     
-    NSDate *startDate = [party valueForKey:kPTHPartyStartTimeKey];
+    NSDate *startDate = [party objectForKey:kPTHPartyStartTimeKey];
     NSString *startTime = [[hourFormatter stringFromDate:startDate] lowercaseString];
     
-    NSDate *endDate = [party valueForKey:kPTHPartyEndTimeKey];
+    NSDate *endDate = [party objectForKey:kPTHPartyEndTimeKey];
     NSString *endTime = [[hourFormatter stringFromDate:endDate] lowercaseString];
     
     NSString *hoursString = [NSString stringWithFormat:@"%@ - %@", startTime, endTime];
@@ -72,7 +72,7 @@
     }
     
     cell.hoursLabel.text = hoursString;
-    cell.locationLabel.text = [party valueForKey:kPTHPartyLocationKey];
+    cell.locationLabel.text = [party objectForKey:kPTHPartyLocationKey];
     cell.delegate = self;
 }
 
@@ -82,6 +82,7 @@
     CLLocation *location = self.locationManager.location;
     PFGeoPoint *geoPoint = [PFGeoPoint geoPointWithLocation:location];
     [query whereKey:kPTHPartyGeoLocationKey nearGeoPoint:geoPoint withinMiles:kPTHAreaOfInterest];
+    /*
     NSDate *selectedDate = self.datePicker.selectedDate;
     if (!selectedDate)
     {
@@ -89,6 +90,7 @@
     }
     
     [PTHUtility constrainQuery:query toDate:selectedDate];
+     */
     return query;
 }
 /*

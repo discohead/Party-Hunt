@@ -1,14 +1,14 @@
 //
-//  PTHPartyDetailTableViewCell.m
+//  PTHPartyDescriptionTableViewCell.m
 //  Party Hunt
 //
-//  Created by Jared McFarland on 10/12/14.
+//  Created by Jared McFarland on 11/27/14.
 //  Copyright (c) 2014 Jared Colin McFarland. All rights reserved.
 //
 
-#import "PTHPartyDetailTableViewCell.h"
+#import "PTHPartyDescriptionTableViewCell.h"
 
-@implementation PTHPartyDetailTableViewCell
+@implementation PTHPartyDescriptionTableViewCell
 
 - (void)awakeFromNib {
     // Initialization code

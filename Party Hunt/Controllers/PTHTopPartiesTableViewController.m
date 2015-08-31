@@ -34,6 +34,7 @@
 {
     PFQuery *query = [PFQuery queryWithClassName:kPTHPartyClassKey];
     
+    /*
     NSDate *selectedDate = self.datePicker.selectedDate;
     if (!selectedDate)
     {
@@ -41,6 +42,7 @@
     }
     
     [PTHUtility constrainQuery:query toDate:selectedDate];
+     */
     
     PFGeoPoint *currentLocation = [PFGeoPoint geoPointWithLocation:self.locationManager.location];
     [query whereKey:kPTHPartyGeoLocationKey nearGeoPoint:currentLocation withinMiles:kPTHAreaOfInterest];
@@ -57,19 +59,19 @@
     BOOL isUpvotedByCurrentUser = [PTHUtility userArray:upvoters containsUser:[PFUser currentUser]];
     [cell setUpvoteStatus:isUpvotedByCurrentUser];
     
-    cell.nameLabel.text = [party valueForKey:kPTHPartyNameKey];
+    cell.nameLabel.text = [party objectForKey:kPTHPartyNameKey];
     //cell.bylineLabel.text = [object objectForKey:@"description"];
     
-    cell.upvoteCountLabel.text = [NSString stringWithFormat:@"%@",[party valueForKey:kPTHPartyUpvoteCountKey]];
-    cell.commentCountLabel.text = [NSString stringWithFormat:@"%@",[party valueForKey:kPTHPartyCommentCountKey]];
+    cell.upvoteCountLabel.text = [NSString stringWithFormat:@"%@",[party objectForKey:kPTHPartyUpvoteCountKey]];
+    cell.commentCountLabel.text = [NSString stringWithFormat:@"%@",[party objectForKey:kPTHPartyCommentCountKey]];
     
     NSDateFormatter *hourFormatter = [[NSDateFormatter alloc] init];
     [hourFormatter setDateFormat:@"ha"];
     
-    NSDate *startDate = [party valueForKey:kPTHPartyStartTimeKey];
+    NSDate *startDate = [party objectForKey:kPTHPartyStartTimeKey];
     NSString *startTime = [[hourFormatter stringFromDate:startDate] lowercaseString];
     
-    NSDate *endDate = [party valueForKey:kPTHPartyEndTimeKey];
+    NSDate *endDate = [party objectForKey:kPTHPartyEndTimeKey];
     NSString *endTime = [[hourFormatter stringFromDate:endDate] lowercaseString];
     
     NSString *hoursString = [NSString stringWithFormat:@"%@ - %@", startTime, endTime];
@@ -85,7 +87,7 @@
     }
     
     cell.hoursLabel.text = hoursString;
-    cell.locationLabel.text = [party valueForKey:kPTHPartyLocationKey];
+    cell.locationLabel.text = [party objectForKey:kPTHPartyLocationKey];
     cell.delegate = self;
 }
 

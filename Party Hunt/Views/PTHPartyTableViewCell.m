@@ -7,6 +7,9 @@
 //
 
 #import "PTHPartyTableViewCell.h"
+#import "PTHConstants.h"
+#import "PTHUtility.h"
+#import <Parse/Parse.h>
 
 @implementation PTHPartyTableViewCell
 

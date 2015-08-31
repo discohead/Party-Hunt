@@ -44,6 +44,7 @@
                   continueAfterRunningActions = "No"
                   symbolName = "-[PFQueryTableViewController loadObjects]"
                   moduleName = "Party Hunt"
+                  usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/nlutsenko/src/parse/ios-client/Parse/Views/PFQueryTableViewController.m"
                   timestampString = "433992998.22847"
                   startingColumnNumber = "9223372036854775807"

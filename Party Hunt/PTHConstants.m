@@ -69,6 +69,7 @@ NSString *const kPTHPartyPrivacyKey       = @"privacy";
 NSString *const kPTHPartyCommentCountKey  = @"commentCount";
 NSString *const kPTHPartyUpvotersKey      = @"upvoters";
 NSString *const kPTHPartyUpvoteCountKey   = @"upvoteCount";
+NSString *const kPTHPartyTicketLinkKey    = @"ticket_uri";
 
 #pragma mark - Cached User Attributes
 // keys
@@ -79,6 +80,10 @@ NSString *const kPTHUserAttributesIsFriendOfCurrentUserKey      = @"isFriendOfCu
 
 NSString *const kPTHPartyCellIdentifier = @"PartyCell";
 NSString *const kPTHDetailCellIdentifier = @"DetailCell";
+NSString *const kPTHDescriptionCellIdentifier = @"DescriptionCell";
+NSString *const kPTHPhotoCellIdentifier = @"PhotoCell";
+NSString *const kPTHAddressCellIdentifier = @"AddressCell";
+NSString *const kPTHCommentCellIdentifier = @"CommentCell";
 
 #pragma mark - Area of interest
 

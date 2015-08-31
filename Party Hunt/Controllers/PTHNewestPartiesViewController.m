@@ -33,22 +33,22 @@
     BOOL isUpvotedByCurrentUser = [PTHUtility userArray:upvoters containsUser:[PFUser currentUser]];
     [cell setUpvoteStatus:isUpvotedByCurrentUser];
     
-    cell.nameLabel.text = [party valueForKey:kPTHPartyNameKey];
+    cell.nameLabel.text = [party objectForKey:kPTHPartyNameKey];
     //cell.bylineLabel.text = [object objectForKey:@"description"];
     
     NSTimeInterval timeSinceCreated = [[NSDate date] timeIntervalSinceDate:party.createdAt];
     float ageInHours = timeSinceCreated/60.0/60.0;
     
-    cell.upvoteCountLabel.text = [NSString stringWithFormat:@"%@",[party valueForKey:kPTHPartyUpvoteCountKey]];
+    cell.upvoteCountLabel.text = [NSString stringWithFormat:@"%@",[party objectForKey:kPTHPartyUpvoteCountKey]];
     cell.commentImageView.image = nil;
     cell.commentCountLabel.text = [NSString stringWithFormat:@"%.0fh",ageInHours];
     NSDateFormatter *hourFormatter = [[NSDateFormatter alloc] init];
     [hourFormatter setDateFormat:@"ha"];
     
-    NSDate *startDate = [party valueForKey:kPTHPartyStartTimeKey];
+    NSDate *startDate = [party objectForKey:kPTHPartyStartTimeKey];
     NSString *startTime = [[hourFormatter stringFromDate:startDate] lowercaseString];
     
-    NSDate *endDate = [party valueForKey:kPTHPartyEndTimeKey];
+    NSDate *endDate = [party objectForKey:kPTHPartyEndTimeKey];
     NSString *endTime = [[hourFormatter stringFromDate:endDate] lowercaseString];
     
     NSString *hoursString = [NSString stringWithFormat:@"%@ - %@", startTime, endTime];
@@ -64,13 +64,14 @@
     }
     
     cell.hoursLabel.text = hoursString;
-    cell.locationLabel.text = [party valueForKey:kPTHPartyLocationKey];
+    cell.locationLabel.text = [party objectForKey:kPTHPartyLocationKey];
     cell.delegate = self;
 }
 
 - (PFQuery *)queryForTable
 {
     PFQuery *query = [PFQuery queryWithClassName:kPTHPartyClassKey];
+    /*
     NSDate *selectedDate = self.datePicker.selectedDate;
     if (!selectedDate)
     {
@@ -78,6 +79,7 @@
     }
     
     [PTHUtility constrainQuery:query toDate:selectedDate];
+     */
     PFGeoPoint *currentLocation = [PFGeoPoint geoPointWithLocation:self.locationManager.location];
     [query whereKey:kPTHPartyGeoLocationKey nearGeoPoint:currentLocation withinMiles:kPTHAreaOfInterest];
     [query orderByDescending:@"createdAt"];
