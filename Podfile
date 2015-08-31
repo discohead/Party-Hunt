@@ -1,0 +1,6 @@
+pod 'Parse', '~> 1.5'
+pod 'Facebook-iOS-SDK', '~> 3.20'
+pod 'ParseFacebookUtils', '~> 1.5'
+pod 'ParseUI', '~> 1.0'
+pod 'DIDatepicker', '~> 0.1'
+pod 'SDWebImage', '~> 3.7'
